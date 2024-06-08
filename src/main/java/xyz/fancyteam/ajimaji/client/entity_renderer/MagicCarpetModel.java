@@ -1,9 +1,15 @@
 package xyz.fancyteam.ajimaji.client.entity_renderer;
 
-import net.minecraft.client.model.*;
+import net.minecraft.client.model.ModelData;
+import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.model.ModelPartBuilder;
+import net.minecraft.client.model.ModelPartData;
+import net.minecraft.client.model.ModelTransform;
+import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
+
 import xyz.fancyteam.ajimaji.entity.MagicCarpet;
 
 public class MagicCarpetModel extends EntityModel<MagicCarpet> {
@@ -19,7 +25,7 @@ public class MagicCarpetModel extends EntityModel<MagicCarpet> {
 
         modelPartData.addChild("main", ModelPartBuilder.create().uv(-30, -30)
                 .cuboid(-12.0F, -1.0F, -16.0F, 24.0F, 1.0F, 32.0F),
-                ModelTransform.pivot(0F, 0F, 0F));
+            ModelTransform.pivot(0F, 0F, 0F));
 
         return TexturedModelData.of(modelData, 16, 16);
     }
@@ -30,5 +36,6 @@ public class MagicCarpetModel extends EntityModel<MagicCarpet> {
     }
 
     @Override
-    public void setAngles(MagicCarpet entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {}
+    public void setAngles(MagicCarpet entity, float limbAngle, float limbDistance, float animationProgress,
+                          float headYaw, float headPitch) {}
 }

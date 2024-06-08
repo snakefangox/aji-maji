@@ -8,7 +8,8 @@ import net.minecraft.registry.Registry;
 import static xyz.fancyteam.ajimaji.AjiMaji.id;
 
 public class AMEntities {
-    public static final EntityType<MagicCarpet> MAGIC_CARPET = EntityType.Builder.create(MagicCarpet::new, SpawnGroup.MISC)
+    public static final EntityType<MagicCarpet> MAGIC_CARPET =
+        EntityType.Builder.create(MagicCarpet::new, SpawnGroup.MISC)
             .dimensions(1.25f, 0.25f).build();
 
     public static void register() {

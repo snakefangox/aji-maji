@@ -3,13 +3,13 @@ package xyz.fancyteam.ajimaji.item;
 import java.util.ArrayList;
 import java.util.List;
 
-import xyz.fancyteam.ajimaji.block.AMBlocks;
-import xyz.fancyteam.ajimaji.misc.AMArmorMaterials;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+
+import xyz.fancyteam.ajimaji.block.AMBlocks;
+import xyz.fancyteam.ajimaji.misc.AMArmorMaterials;
 
 import static xyz.fancyteam.ajimaji.AjiMaji.id;
 

@@ -95,7 +95,7 @@ public class ArmorBlockItem extends ArmorItem {
                         copyComponentsToBlockEntity(world, blockPos, itemStack);
                         blockState2.getBlock().onPlaced(world, blockPos, blockState2, playerEntity, itemStack);
                         if (playerEntity instanceof ServerPlayerEntity) {
-                            Criteria.PLACED_BLOCK.trigger((ServerPlayerEntity)playerEntity, blockPos, itemStack);
+                            Criteria.PLACED_BLOCK.trigger((ServerPlayerEntity) playerEntity, blockPos, itemStack);
                         }
                     }
 
@@ -108,7 +108,8 @@ public class ArmorBlockItem extends ArmorItem {
                         (blockSoundGroup.getVolume() + 1.0F) / 2.0F,
                         blockSoundGroup.getPitch() * 0.8F
                     );
-                    world.emitGameEvent(GameEvent.BLOCK_PLACE, blockPos, GameEvent.Emitter.of(playerEntity, blockState2));
+                    world.emitGameEvent(GameEvent.BLOCK_PLACE, blockPos,
+                        GameEvent.Emitter.of(playerEntity, blockState2));
                     itemStack.decrementUnlessCreative(1, playerEntity);
                     return ActionResult.success(world.isClient);
                 }
@@ -133,7 +134,8 @@ public class ArmorBlockItem extends ArmorItem {
         }
     }
 
-    protected boolean postPlacement(BlockPos pos, World world, @Nullable PlayerEntity player, ItemStack stack, BlockState state) {
+    protected boolean postPlacement(BlockPos pos, World world, @Nullable PlayerEntity player, ItemStack stack,
+                                    BlockState state) {
         return writeNbtToBlockEntity(world, player, pos, stack);
     }
 
@@ -144,7 +146,8 @@ public class ArmorBlockItem extends ArmorItem {
     }
 
     private BlockState placeFromNbt(BlockPos pos, World world, ItemStack stack, BlockState state) {
-        BlockStateComponent blockStateComponent = stack.getOrDefault(DataComponentTypes.BLOCK_STATE, BlockStateComponent.DEFAULT);
+        BlockStateComponent blockStateComponent =
+            stack.getOrDefault(DataComponentTypes.BLOCK_STATE, BlockStateComponent.DEFAULT);
         if (blockStateComponent.isEmpty()) {
             return state;
         } else {
@@ -172,7 +175,8 @@ public class ArmorBlockItem extends ArmorItem {
         return context.getWorld().setBlockState(context.getBlockPos(), state, Block.NOTIFY_ALL_AND_REDRAW);
     }
 
-    public static boolean writeNbtToBlockEntity(World world, @Nullable PlayerEntity player, BlockPos pos, ItemStack stack) {
+    public static boolean writeNbtToBlockEntity(World world, @Nullable PlayerEntity player, BlockPos pos,
+                                                ItemStack stack) {
         MinecraftServer minecraftServer = world.getServer();
         if (minecraftServer == null) {
             return false;
@@ -181,7 +185,8 @@ public class ArmorBlockItem extends ArmorItem {
             if (!nbtComponent.isEmpty()) {
                 BlockEntity blockEntity = world.getBlockEntity(pos);
                 if (blockEntity != null) {
-                    if (world.isClient || !blockEntity.copyItemDataRequiresOperator() || player != null && player.isCreativeLevelTwoOp()) {
+                    if (world.isClient || !blockEntity.copyItemDataRequiresOperator() ||
+                        player != null && player.isCreativeLevelTwoOp()) {
                         return nbtComponent.applyToBlockEntity(blockEntity, world.getRegistryManager());
                     }
 
@@ -219,7 +224,8 @@ public class ArmorBlockItem extends ArmorItem {
 
     @Override
     public void onItemEntityDestroyed(ItemEntity entity) {
-        ContainerComponent containerComponent = entity.getStack().set(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT);
+        ContainerComponent containerComponent =
+            entity.getStack().set(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT);
         if (containerComponent != null) {
             ItemUsage.spawnItemContents(entity, containerComponent.iterateNonEmptyCopy());
         }

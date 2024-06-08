@@ -8,6 +8,7 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+
 import xyz.fancyteam.ajimaji.AjiMaji;
 import xyz.fancyteam.ajimaji.entity.MagicCarpet;
 
@@ -22,7 +23,8 @@ public class MagicCarpetRenderer extends EntityRenderer<MagicCarpet> {
     }
 
     @Override
-    public void render(MagicCarpet entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+    public void render(MagicCarpet entity, float yaw, float tickDelta, MatrixStack matrices,
+                       VertexConsumerProvider vertexConsumers, int light) {
         int overlay = OverlayTexture.DEFAULT_UV;
 
         matrices.push();

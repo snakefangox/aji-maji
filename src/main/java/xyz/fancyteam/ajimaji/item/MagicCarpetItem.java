@@ -4,6 +4,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
+
 import xyz.fancyteam.ajimaji.entity.AMEntities;
 import xyz.fancyteam.ajimaji.entity.MagicCarpet;
 
@@ -35,7 +36,8 @@ public class MagicCarpetItem extends Item {
         var sideNormal = ctx.getSide().getUnitVector();
         var halfWidth = carpetType.getWidth() / 2.0;
         var halfHeight = carpetType.getHeight() / 2.0;
-        var spawnPos = ctx.getHitPos().add(sideNormal.x * halfWidth, sideNormal.y * halfHeight, sideNormal.z * halfWidth);
+        var spawnPos =
+            ctx.getHitPos().add(sideNormal.x * halfWidth, sideNormal.y * halfHeight, sideNormal.z * halfWidth);
         magicCarpet.setPosition(spawnPos);
 
         var stack = ctx.getStack();

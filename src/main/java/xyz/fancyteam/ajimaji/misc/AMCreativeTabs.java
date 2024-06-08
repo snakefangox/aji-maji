@@ -1,12 +1,12 @@
 package xyz.fancyteam.ajimaji.misc;
 
-import xyz.fancyteam.ajimaji.item.AMItems;
-
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 
 import net.minecraft.item.ItemGroup;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+
+import xyz.fancyteam.ajimaji.item.AMItems;
 
 import static xyz.fancyteam.ajimaji.AjiMaji.id;
 import static xyz.fancyteam.ajimaji.AjiMaji.tt;

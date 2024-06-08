@@ -2,18 +2,18 @@ package xyz.fancyteam.ajimaji;
 
 import java.util.logging.Logger;
 
+import net.fabricmc.api.ModInitializer;
+
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+
 import xyz.fancyteam.ajimaji.block.AMBlocks;
 import xyz.fancyteam.ajimaji.component.AMDataComponents;
 import xyz.fancyteam.ajimaji.entity.AMEntities;
 import xyz.fancyteam.ajimaji.item.AMItems;
 import xyz.fancyteam.ajimaji.misc.AMArmorMaterials;
 import xyz.fancyteam.ajimaji.misc.AMCreativeTabs;
-
-import net.fabricmc.api.ModInitializer;
-
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 public class AjiMaji implements ModInitializer {
 

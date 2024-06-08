@@ -36,9 +36,13 @@ processResources {
 
     filesMatching("fabric.mod.json") {
         expand "version": project.version,
-                "minecraft_version": project.minecraft_version,
+                "minecraft_version": project.fmj_minecraft_version,
                 "loader_version": project.loader_version
     }
+
+    exclude("**/.gitkeep")
+    exclude("**/*.xcf")
+    exclude("**/*.bbmodel")
 }
 
 def targetJavaVersion = 21
@@ -66,7 +70,13 @@ java {
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
+        rename { "${it}_${project.archivesBaseName}" }
+    }
+}
+
+afterEvaluate {
+    tasks.named("genSources").configure {
+        dependsOn = ["genSourcesWithVineflower"]
     }
 }
 

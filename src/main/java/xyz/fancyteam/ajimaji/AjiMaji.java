@@ -1,8 +1,16 @@
 package xyz.fancyteam.ajimaji;
 
+import java.util.logging.Logger;
+
+import xyz.fancyteam.ajimaji.block.AMBlocks;
+import xyz.fancyteam.ajimaji.item.AMItems;
+import xyz.fancyteam.ajimaji.misc.AMCreativeTabs;
+
 import net.fabricmc.api.ModInitializer;
 
-import java.util.logging.Logger;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public class AjiMaji implements ModInitializer {
 
@@ -11,6 +19,16 @@ public class AjiMaji implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        AMBlocks.register();
+        AMItems.register();
+        AMCreativeTabs.register();
+    }
 
+    public static Identifier id(String path) {
+        return Identifier.of(MOD_ID, path);
+    }
+
+    public static MutableText tt(String prefix, String suffix) {
+        return Text.translatable(prefix + "." + MOD_ID + "." + suffix);
     }
 }

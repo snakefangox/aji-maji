@@ -11,7 +11,6 @@ public class AjiMajiClient implements ClientModInitializer {
         AMEntityRenderers.registerEntityRenderers();
         AMEntityRenderers.registerModelLayers();
         AMArmorRenderers.register();
-        
-        
+        AMClientBlocks.register();
     }
 }

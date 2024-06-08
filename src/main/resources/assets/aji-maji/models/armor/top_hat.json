@@ -1,9 +1,9 @@
 {
-  "parent": "minecraft:block/cauldron",
+  "parent": "aji-maji:block/top_hat",
   "display": {
     "head": {
       "rotation": [ 180, 0, 0 ],
-      "translation": [ 0, 3, 0 ],
+      "translation": [ 0, 9.5, 0 ],
       "scale": [ 1, 1, 1 ]
     }
   }

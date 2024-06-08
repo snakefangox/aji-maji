@@ -17,9 +17,12 @@ public class AMItems {
 
     public static final TopHatBlockItem TOP_HAT =
         new TopHatBlockItem(AMBlocks.TOP_HAT, new Item.Settings().maxCount(1));
+    public static final MagicCarpetItem MAGIC_CARPET =
+            new MagicCarpetItem(new Item.Settings().maxCount(1));
 
     public static void register() {
         register("top_hat", TOP_HAT);
+        register("magic_carpet", MAGIC_CARPET);
     }
 
     public static void register(String path, Item item) {

@@ -1,5 +1,9 @@
 {
   "itemGroup.aji-maji.main": "Aji Maji",
 
-  "block.aji-maji.top_hat": "Top Hat"
+  "block.aji-maji.top_hat": "Top Hat",
+
+  "item.aji-maji.magic_carpet": "Magic Carpet",
+
+  "entity.aji-maji.magic_carpet": "Magic Carpet"
 }

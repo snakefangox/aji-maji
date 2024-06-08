@@ -3,6 +3,8 @@ package xyz.fancyteam.ajimaji;
 import java.util.logging.Logger;
 
 import xyz.fancyteam.ajimaji.block.AMBlocks;
+import xyz.fancyteam.ajimaji.component.AMDataComponents;
+import xyz.fancyteam.ajimaji.entity.AMEntities;
 import xyz.fancyteam.ajimaji.item.AMItems;
 import xyz.fancyteam.ajimaji.misc.AMCreativeTabs;
 
@@ -21,7 +23,9 @@ public class AjiMaji implements ModInitializer {
     public void onInitialize() {
         AMBlocks.register();
         AMItems.register();
+        AMEntities.register();
         AMCreativeTabs.register();
+        AMDataComponents.register();
     }
 
     public static Identifier id(String path) {

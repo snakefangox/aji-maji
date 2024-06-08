@@ -15,7 +15,7 @@ public class TopHatBlock extends Block {
     private static final VoxelShape OUTLINE_SHAPE = VoxelShapes.union( //
         cuboid(3.0, 0.0, 3.0, 13.0, 8.0, 13.0), //
         cuboid(2.75, 8.0, 2.75, 13.25, 11, 13.25), //
-        cuboid(0.5, 10.75, 0.5, 15.5, 11.25, 15.5) //
+        cuboid(0.5, 10.75, 0.5, 15.5, 11, 15.5) //
     );
     private static final VoxelShape COLLISION_SHAPE =
         VoxelShapes.combine(OUTLINE_SHAPE, cuboid(3.25, 0.25, 3.25, 12.75, 12.0, 12.75),

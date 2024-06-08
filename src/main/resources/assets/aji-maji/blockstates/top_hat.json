@@ -1,6 +1,9 @@
 {
   "variants": {
-    "": {
+    "wearing=true": {
+      "model": "aji-maji:armor/top_hat"
+    },
+    "wearing=false": {
       "model": "aji-maji:block/top_hat"
     }
   }

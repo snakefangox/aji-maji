@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xyz.fancyteam.ajimaji.block.AMBlocks;
+import xyz.fancyteam.ajimaji.misc.AMArmorMaterials;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,9 +17,10 @@ public class AMItems {
     public static final List<ItemStack> CREATIVE_TAB_ITEMS = new ArrayList<>();
 
     public static final TopHatBlockItem TOP_HAT =
-        new TopHatBlockItem(AMBlocks.TOP_HAT, new Item.Settings().maxCount(1));
+        new TopHatBlockItem(AMBlocks.TOP_HAT, AMArmorMaterials.MAGICIANS_ARMOR_MATERIAL,
+            new Item.Settings().maxCount(1));
     public static final MagicCarpetItem MAGIC_CARPET =
-            new MagicCarpetItem(new Item.Settings().maxCount(1));
+        new MagicCarpetItem(new Item.Settings().maxCount(1));
 
     public static void register() {
         register("top_hat", TOP_HAT);

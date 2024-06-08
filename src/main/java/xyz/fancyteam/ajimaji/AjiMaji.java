@@ -6,6 +6,7 @@ import xyz.fancyteam.ajimaji.block.AMBlocks;
 import xyz.fancyteam.ajimaji.component.AMDataComponents;
 import xyz.fancyteam.ajimaji.entity.AMEntities;
 import xyz.fancyteam.ajimaji.item.AMItems;
+import xyz.fancyteam.ajimaji.misc.AMArmorMaterials;
 import xyz.fancyteam.ajimaji.misc.AMCreativeTabs;
 
 import net.fabricmc.api.ModInitializer;
@@ -22,6 +23,7 @@ public class AjiMaji implements ModInitializer {
     @Override
     public void onInitialize() {
         AMBlocks.register();
+        AMArmorMaterials.register();
         AMItems.register();
         AMEntities.register();
         AMCreativeTabs.register();

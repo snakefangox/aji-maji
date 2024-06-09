@@ -10,9 +10,9 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 
-import xyz.fancyteam.ajimaji.entity.MagicCarpet;
+import xyz.fancyteam.ajimaji.entity.MagicCarpetEntity;
 
-public class MagicCarpetModel extends EntityModel<MagicCarpet> {
+public class MagicCarpetModel extends EntityModel<MagicCarpetEntity> {
     private final ModelPart main;
 
     public MagicCarpetModel(ModelPart root) {
@@ -36,6 +36,6 @@ public class MagicCarpetModel extends EntityModel<MagicCarpet> {
     }
 
     @Override
-    public void setAngles(MagicCarpet entity, float limbAngle, float limbDistance, float animationProgress,
+    public void setAngles(MagicCarpetEntity entity, float limbAngle, float limbDistance, float animationProgress,
                           float headYaw, float headPitch) {}
 }

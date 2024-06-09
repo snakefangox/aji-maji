@@ -21,10 +21,13 @@ public class AMItems {
             new Item.Settings().maxCount(1));
     public static final MagicCarpetItem MAGIC_CARPET =
         new MagicCarpetItem(new Item.Settings().maxCount(1));
+    public static final CardDeckItem CARD_DECK =
+        new CardDeckItem(new Item.Settings());
 
     public static void register() {
         register("top_hat", TOP_HAT);
         register("magic_carpet", MAGIC_CARPET);
+        register("card_deck", CARD_DECK);
     }
 
     public static void register(String path, Item item) {

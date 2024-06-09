@@ -12,8 +12,13 @@ public class AMEntities {
         EntityType.Builder.create(MagicCarpet::new, SpawnGroup.MISC)
             .dimensions(1.25f, 0.25f).build();
 
+    public static final EntityType<PlayingCardEntity> PLAYING_CARD =
+        EntityType.Builder.<PlayingCardEntity>create(PlayingCardEntity::new, SpawnGroup.MISC)
+            .dimensions(0.5F, 0.5F).eyeHeight(0.13F).maxTrackingRange(4).trackingTickInterval(20).build();
+
     public static void register() {
         register("magic_carpet", MAGIC_CARPET);
+        register("playing_card", PLAYING_CARD);
     }
 
     private static void register(String path, EntityType<?> entityType) {

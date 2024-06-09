@@ -14,6 +14,7 @@ public class AMEntityRenderers {
 
     public static void registerEntityRenderers() {
         EntityRendererRegistry.register(AMEntities.MAGIC_CARPET, MagicCarpetRenderer::new);
+        EntityRendererRegistry.register(AMEntities.PLAYING_CARD, PlayingCardEntityRenderer::new);
     }
 
     public static void registerModelLayers() {

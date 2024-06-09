@@ -10,9 +10,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 import xyz.fancyteam.ajimaji.AjiMaji;
-import xyz.fancyteam.ajimaji.entity.MagicCarpet;
+import xyz.fancyteam.ajimaji.entity.MagicCarpetEntity;
 
-public class MagicCarpetRenderer extends EntityRenderer<MagicCarpet> {
+public class MagicCarpetRenderer extends EntityRenderer<MagicCarpetEntity> {
     private static final Identifier TEXTURE = AjiMaji.id("textures/entity/magic_carpet.png");
     private static final RenderLayer MAGIC_CARPET = RenderLayer.getEntityCutout(TEXTURE);
     private final ModelPart model;
@@ -23,7 +23,7 @@ public class MagicCarpetRenderer extends EntityRenderer<MagicCarpet> {
     }
 
     @Override
-    public void render(MagicCarpet entity, float yaw, float tickDelta, MatrixStack matrices,
+    public void render(MagicCarpetEntity entity, float yaw, float tickDelta, MatrixStack matrices,
                        VertexConsumerProvider vertexConsumers, int light) {
         int overlay = OverlayTexture.DEFAULT_UV;
 
@@ -37,7 +37,7 @@ public class MagicCarpetRenderer extends EntityRenderer<MagicCarpet> {
     }
 
     @Override
-    public Identifier getTexture(MagicCarpet entity) {
+    public Identifier getTexture(MagicCarpetEntity entity) {
         return TEXTURE;
     }
 }

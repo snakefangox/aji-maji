@@ -6,7 +6,7 @@ import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.Direction;
 import xyz.fancyteam.ajimaji.entity.AMEntities;
-import xyz.fancyteam.ajimaji.entity.MagicCarpet;
+import xyz.fancyteam.ajimaji.entity.MagicCarpetEntity;
 
 public class MagicCarpetItem extends Item {
     public MagicCarpetItem(Settings settings) {
@@ -28,7 +28,7 @@ public class MagicCarpetItem extends Item {
 
     private static void spawnCarpetFromUsageContext(ItemUsageContext ctx) {
         var carpetType = AMEntities.MAGIC_CARPET;
-        MagicCarpet magicCarpet = carpetType.create(ctx.getWorld());
+        MagicCarpetEntity magicCarpet = carpetType.create(ctx.getWorld());
         // Carpet has been disabled somehow U_U
         if (magicCarpet == null) return;
 

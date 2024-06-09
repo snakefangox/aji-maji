@@ -1,3 +1,6 @@
 {
-  "parent": "minecraft:item/cauldron"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "aji-maji:item/top_hat"
+  }
 }

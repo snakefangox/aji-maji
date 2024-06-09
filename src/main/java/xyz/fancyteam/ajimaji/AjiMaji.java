@@ -14,6 +14,8 @@ import xyz.fancyteam.ajimaji.entity.AMEntities;
 import xyz.fancyteam.ajimaji.item.AMItems;
 import xyz.fancyteam.ajimaji.misc.AMArmorMaterials;
 import xyz.fancyteam.ajimaji.misc.AMCreativeTabs;
+import xyz.fancyteam.ajimaji.misc.AMRegistries;
+import xyz.fancyteam.ajimaji.recipe.AMRecipes;
 
 public class AjiMaji implements ModInitializer {
 
@@ -22,12 +24,14 @@ public class AjiMaji implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        AMRegistries.register();
         AMBlocks.register();
         AMArmorMaterials.register();
         AMItems.register();
         AMEntities.register();
         AMCreativeTabs.register();
         AMDataComponents.register();
+        AMRecipes.register();
     }
 
     public static Identifier id(String path) {

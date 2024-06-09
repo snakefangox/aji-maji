@@ -6,5 +6,7 @@
   "item.aji-maji.magic_carpet": "Magic Carpet",
   "item.aji-maji.card_deck": "Deck of Cards",
 
-  "entity.aji-maji.magic_carpet": "Magic Carpet"
+  "entity.aji-maji.magic_carpet": "Magic Carpet",
+
+  "message.aji-maji.not_carpet_owner": "You don't own this carpet!"
 }

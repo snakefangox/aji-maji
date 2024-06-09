@@ -1,7 +1,5 @@
 package xyz.fancyteam.ajimaji.entity;
 
-import java.util.UUID;
-
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -12,9 +10,11 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-
+import xyz.fancyteam.ajimaji.AjiMaji;
 import xyz.fancyteam.ajimaji.component.AMDataComponents;
 import xyz.fancyteam.ajimaji.item.AMItems;
+
+import java.util.UUID;
 
 public class MagicCarpet extends Entity {
     private UUID owner;
@@ -59,16 +59,22 @@ public class MagicCarpet extends Entity {
 
         if (actionResult != ActionResult.PASS) {
             return actionResult;
-        } else if (player.isSneaking() && player.getUuid().equals(getOwner()) &&
-            player.getStackInHand(hand).isEmpty()) {
-            var stack = writeDataToItemStack();
-            player.setStackInHand(hand, stack);
-            discard();
-
+        } else if (!getWorld().isClient && player.isSneaking() && player.getStackInHand(hand).isEmpty()) {
+            tryPickUpCarpet(player, hand);
             return ActionResult.SUCCESS;
         }
 
         return ActionResult.PASS;
+    }
+
+    private void tryPickUpCarpet(PlayerEntity player, Hand hand) {
+        if (!player.getUuid().equals(getOwner())) {
+            player.sendMessage(AjiMaji.tt("message", "not_carpet_owner"), true);
+        } else {
+            var stack = writeDataToItemStack();
+            player.setStackInHand(hand, stack);
+            discard();
+        }
     }
 
     @Override

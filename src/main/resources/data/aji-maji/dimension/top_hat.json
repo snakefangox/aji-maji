@@ -1,0 +1,11 @@
+{
+  "type": "aji-maji:top_hat",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "aji-maji:top_hat",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "minecraft:plains"
+    }
+  }
+}

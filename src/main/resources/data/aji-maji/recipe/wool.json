@@ -1,0 +1,12 @@
+{
+  "type": "aji-maji:top_hat",
+  "ingredients": [
+    {
+      "tag": "minecraft:wool"
+    }
+  ],
+  "result": {
+    "type": "aji-maji:any_of_tag",
+    "tag": "minecraft:wool"
+  }
+}

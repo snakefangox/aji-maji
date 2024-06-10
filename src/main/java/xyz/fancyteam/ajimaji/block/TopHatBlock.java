@@ -11,10 +11,16 @@ import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.function.BooleanBiFunction;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -31,8 +37,17 @@ public class TopHatBlock extends BlockWithEntity {
     private static final VoxelShape COLLISION_SHAPE =
         VoxelShapes.combine(OUTLINE_SHAPE, cuboid(3.25, 0.25, 3.25, 12.75, 12.0, 12.75),
             BooleanBiFunction.ONLY_FIRST);
+    private static final Box ITEM_SHAPE = box(3.25, 0.25, 3.25, 12.75, 8.0, 12.75);
 
     public static final MapCodec<TopHatBlock> MAP_CODEC = createCodec(TopHatBlock::new);
+
+    private static VoxelShape cuboid(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+        return VoxelShapes.cuboid(minX / 16.0, minY / 16.0, minZ / 16.0, maxX / 16.0, maxY / 16.0, maxZ / 16.0);
+    }
+
+    private static Box box(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+        return new Box(minX / 16.0, minY / 16.0, minZ / 16.0, maxX / 16.0, maxY / 16.0, maxZ / 16.0);
+    }
 
     public TopHatBlock(Settings settings) {
         super(settings);
@@ -59,10 +74,6 @@ public class TopHatBlock extends BlockWithEntity {
         return COLLISION_SHAPE;
     }
 
-    private static VoxelShape cuboid(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-        return VoxelShapes.cuboid(minX / 16.0, minY / 16.0, minZ / 16.0, maxX / 16.0, maxY / 16.0, maxZ / 16.0);
-    }
-
     @Override
     protected BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.MODEL;
@@ -82,7 +93,28 @@ public class TopHatBlock extends BlockWithEntity {
 
     @Override
     protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        // TODO: item insertion & crafting
-        super.onEntityCollision(state, world, pos, entity);
+        if (!world.isClient && entity instanceof ItemEntity itemEntity) {
+            Vec3d itemPos = itemEntity.getPos().subtract(Vec3d.of(pos));
+            if (ITEM_SHAPE.contains(itemPos)) {
+                BlockEntity blockEntity = world.getBlockEntity(pos);
+                if (blockEntity instanceof TopHatBlockEntity be) {
+                    be.insertItem(itemEntity.getStack().copy());
+                    itemEntity.discard();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+        if (player.isSneaking()) {
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof TopHatBlockEntity be) {
+                if (world.isClient) return ActionResult.SUCCESS;
+                be.dropAllStacks();
+                return ActionResult.CONSUME;
+            }
+        }
+        return ActionResult.FAIL;
     }
 }

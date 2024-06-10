@@ -1,4 +1,4 @@
-package xyz.fancyteam.ajimaji.net;
+package xyz.fancyteam.ajimaji.util;
 
 import io.netty.buffer.ByteBuf;
 

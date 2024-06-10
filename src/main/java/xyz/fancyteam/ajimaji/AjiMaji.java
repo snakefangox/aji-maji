@@ -9,6 +9,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import xyz.fancyteam.ajimaji.block.AMBlocks;
+import xyz.fancyteam.ajimaji.block_entity.AMBlockEntities;
 import xyz.fancyteam.ajimaji.component.AMDataComponents;
 import xyz.fancyteam.ajimaji.entity.AMEntities;
 import xyz.fancyteam.ajimaji.item.AMItems;
@@ -28,6 +29,7 @@ public class AjiMaji implements ModInitializer {
         AMBlocks.register();
         AMArmorMaterials.register();
         AMItems.register();
+        AMBlockEntities.register();
         AMEntities.register();
         AMCreativeTabs.register();
         AMDataComponents.register();

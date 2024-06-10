@@ -26,14 +26,11 @@ public class TopHatRecipe implements Recipe<TopHatRecipeInput> {
     public static final RecipeType<TopHatRecipe> TYPE = new RecipeType<>() {};
 
     private final boolean orderSpecific;
-    private final boolean avoidInputsInOutputs;
     private final List<Ingredient> ingredients;
     private final TopHatRecipeResult result;
 
-    public TopHatRecipe(boolean orderSpecific, boolean avoidInputsInOutputs, List<Ingredient> ingredients,
-                        TopHatRecipeResult result) {
+    public TopHatRecipe(boolean orderSpecific, List<Ingredient> ingredients, TopHatRecipeResult result) {
         this.orderSpecific = orderSpecific;
-        this.avoidInputsInOutputs = avoidInputsInOutputs;
         this.ingredients = ImmutableList.copyOf(ingredients);
         this.result = result;
     }
@@ -103,26 +100,23 @@ public class TopHatRecipe implements Recipe<TopHatRecipeInput> {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return null;
+        return SERIALIZER;
     }
 
     @Override
     public RecipeType<?> getType() {
-        return null;
+        return TYPE;
     }
 
     public static final class Serializer implements RecipeSerializer<TopHatRecipe> {
         public static final MapCodec<TopHatRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.BOOL.lenientOptionalFieldOf("order_specific", false).forGetter(recipe -> recipe.orderSpecific),
-            Codec.BOOL.lenientOptionalFieldOf("avoid_inputs_in_outputs", true)
-                .forGetter(recipe -> recipe.avoidInputsInOutputs),
             Ingredient.DISALLOW_EMPTY_CODEC.listOf().fieldOf("ingredients").forGetter(recipe -> recipe.ingredients),
             TopHatRecipeResult.CODEC.fieldOf("result").forGetter(TopHatRecipe::getResult)
         ).apply(instance, TopHatRecipe::new));
 
         public static final PacketCodec<RegistryByteBuf, TopHatRecipe> PACKET_CODEC = PacketCodec.tuple(
             PacketCodecs.BOOL, recipe -> recipe.orderSpecific,
-            PacketCodecs.BOOL, recipe -> recipe.avoidInputsInOutputs,
             Ingredient.PACKET_CODEC.collect(PacketCodecs.toList()), recipe -> recipe.ingredients,
             TopHatRecipeResult.PACKET_CODEC, TopHatRecipe::getResult,
             TopHatRecipe::new

@@ -9,8 +9,8 @@ import static xyz.fancyteam.ajimaji.AjiMaji.id;
 
 public class AMRecipes {
     public static void register() {
-        Registry.register(Registries.RECIPE_TYPE, id("top_hat_recipe"), TopHatRecipe.TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, id("top_hat_recipe"), TopHatRecipe.SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, id("top_hat"), TopHatRecipe.TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, id("top_hat"), TopHatRecipe.SERIALIZER);
 
         Registry.register(AMRegistries.TOP_HAT_RECIPE_OUTPUT, id("item"), TopHatRecipeResultItem.TYPE);
         Registry.register(AMRegistries.TOP_HAT_RECIPE_OUTPUT, id("any_of_tag"), TopHatRecipeResultAnyOfTag.TYPE);

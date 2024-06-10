@@ -20,12 +20,13 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.math.random.Random;
 
-import xyz.fancyteam.ajimaji.net.PacketCodecUtils;
+import xyz.fancyteam.ajimaji.util.CodecUtils;
+import xyz.fancyteam.ajimaji.util.PacketCodecUtils;
 
 public record TopHatRecipeResultAnyOfTag(TagKey<Item> tag, int count) implements TopHatRecipeResult {
     public static final MapCodec<TopHatRecipeResultAnyOfTag> MAP_CODEC =
         RecordCodecBuilder.mapCodec(instance -> instance.group(
-            TagKey.codec(RegistryKeys.ITEM).fieldOf("tag").forGetter(TopHatRecipeResultAnyOfTag::tag),
+            CodecUtils.tagKeyCodec(RegistryKeys.ITEM).fieldOf("tag").forGetter(TopHatRecipeResultAnyOfTag::tag),
             Codec.INT.lenientOptionalFieldOf("count", 1).forGetter(TopHatRecipeResultAnyOfTag::count)
         ).apply(instance, TopHatRecipeResultAnyOfTag::new));
 
@@ -34,7 +35,7 @@ public record TopHatRecipeResultAnyOfTag(TagKey<Item> tag, int count) implements
         PacketCodecs.INTEGER, TopHatRecipeResultAnyOfTag::count,
         TopHatRecipeResultAnyOfTag::new
     );
-    
+
     public static final Type TYPE = new Type(MAP_CODEC, PACKET_CODEC);
 
     @Override

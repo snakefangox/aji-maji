@@ -2,7 +2,6 @@ package xyz.fancyteam.ajimaji.item;
 
 import net.fabricmc.fabric.api.item.v1.FabricItem;
 
-import net.minecraft.component.ComponentType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,8 +23,18 @@ public class CardDeckItem extends Item implements FabricItem {
     }
 
     @Override
+    public boolean isItemBarVisible(ItemStack stack) {
+        return stack.getCount() > 1;
+    }
+
+    @Override
+    public int getItemBarStep(ItemStack stack) {
+        return (int) (13.0f * (stack.getCount() - 1) / 63.0f);
+    }
+
+    @Override
     public int getItemBarColor(ItemStack stack) {
-        return super.getItemBarColor(stack);
+        return 0x0000FF; // TODO: actual color
     }
 
     @Override

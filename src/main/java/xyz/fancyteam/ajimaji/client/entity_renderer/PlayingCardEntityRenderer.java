@@ -33,7 +33,8 @@ public class PlayingCardEntityRenderer extends EntityRenderer<PlayingCardEntity>
                 MathHelper.lerp(tickDelta, entity.prevYaw, entity.getYaw()) - 90.0f)
         );
         if (entity.getState() == PlayingCardEntity.State.FALLING) {
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(((AjiMajiClient.rotationTicks + tickDelta) * 5.0f) % 360.0f));
+            float degrees = ((AjiMajiClient.rotationTicks + tickDelta) * 10.0f) % 360.0f;
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(degrees));
         }
         else if (entity.getState() == PlayingCardEntity.State.FLYING) {
             matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(MathHelper.lerp(tickDelta, entity.prevPitch, entity.getPitch())));

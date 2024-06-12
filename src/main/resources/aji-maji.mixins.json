@@ -9,6 +9,7 @@
     "client.BipedEntityModelMixin",
     "client.ClientPlayerEntityMixin",
     "client.DrawContextMixin",
+    "client.HeldItemFeatureRendererMixin",
     "client.MinecraftClientMixin"
   ],
   "injectors": {

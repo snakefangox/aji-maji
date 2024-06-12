@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "aji-maji:block/card_box",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "aji-maji:block/card_box"
+    },
+    "facing=south": {
+      "model": "aji-maji:block/card_box",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "aji-maji:block/card_box",
+      "y": 270
+    }
+  }
+}

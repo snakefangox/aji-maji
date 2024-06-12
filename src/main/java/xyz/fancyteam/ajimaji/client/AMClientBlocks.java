@@ -9,5 +9,6 @@ import xyz.fancyteam.ajimaji.block.AMBlocks;
 public class AMClientBlocks {
     public static void register() {
         BlockRenderLayerMap.INSTANCE.putBlock(AMBlocks.TOP_HAT, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AMBlocks.CARD_BOX, RenderLayer.getCutout());
     }
 }

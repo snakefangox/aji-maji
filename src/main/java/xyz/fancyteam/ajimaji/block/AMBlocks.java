@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.registry.Registries;
@@ -16,12 +17,16 @@ public class AMBlocks {
     public static final TopHatBlock TOP_HAT = new TopHatBlock(
         AbstractBlock.Settings.create().mapColor(MapColor.BLACK).nonOpaque().instrument(NoteBlockInstrument.HAT)
             .sounds(BlockSoundGroup.WOOL));
+    public static final CardBoxBlock CARD_BOX = new CardBoxBlock(
+        AbstractBlock.Settings.create().mapColor(MapColor.RED).nonOpaque()
+    );
 
     public static void register() {
         register("top_hat", TOP_HAT, TopHatBlock.MAP_CODEC);
+        register("card_box", CARD_BOX, CardBoxBlock.MAP_CODEC);
     }
 
-    private static void register(String path, Block block, MapCodec<? extends TopHatBlock> codec) {
+    private static void register(String path, Block block, MapCodec<? extends Block> codec) {
         Registry.register(Registries.BLOCK, id(path), block);
         Registry.register(Registries.BLOCK_TYPE, id(path), codec);
     }

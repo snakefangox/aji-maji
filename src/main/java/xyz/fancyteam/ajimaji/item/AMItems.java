@@ -3,6 +3,7 @@ package xyz.fancyteam.ajimaji.item;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -23,11 +24,14 @@ public class AMItems {
         new MagicCarpetItem(new Item.Settings().maxCount(1));
     public static final CardDeckItem CARD_DECK =
         new CardDeckItem(new Item.Settings());
+    public static final BlockItem CARD_BOX =
+        new BlockItem(AMBlocks.CARD_BOX, new Item.Settings());
 
     public static void register() {
         register("top_hat", TOP_HAT);
         register("magic_carpet", MAGIC_CARPET);
         register("card_deck", CARD_DECK);
+        register("card_box", CARD_BOX);
     }
 
     public static void register(String path, Item item) {

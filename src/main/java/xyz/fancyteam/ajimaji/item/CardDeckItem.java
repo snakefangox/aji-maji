@@ -10,6 +10,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
+import xyz.fancyteam.ajimaji.entity.PlayingCardEntity;
+
 public class CardDeckItem extends Item implements FabricItem {
     public CardDeckItem(Item.Settings settings) {
         super(settings);
@@ -49,10 +51,11 @@ public class CardDeckItem extends Item implements FabricItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         super.use(world, user, hand);
-        user.setCurrentHand(hand);
-        return TypedActionResult.consume(user.getStackInHand(hand));
-
-        /*var stack = user.getStackInHand(hand);
+        if (!user.isUsingItem() || !user.getActiveItem().isOf(AMItems.CARD_DECK) || user.getActiveHand() != hand) {
+            user.setCurrentHand(hand);
+            return TypedActionResult.consume(user.getStackInHand(hand));
+        }
+        var stack = user.getStackInHand(hand);
         if (stack.getCount() <= 1) {
             return TypedActionResult.fail(stack);
         }
@@ -60,7 +63,8 @@ public class CardDeckItem extends Item implements FabricItem {
         entity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0f, 2.0f, 1.0f);
         entity.initialVelocity = entity.getVelocity();
         world.spawnEntity(entity);
-        stack.decrement(1);*/
+        stack.decrement(1);
+        return TypedActionResult.consume(user.getStackInHand(hand));
     }
 
     @Override

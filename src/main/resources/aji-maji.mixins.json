@@ -8,7 +8,8 @@
   "client": [
     "client.BipedEntityModelMixin",
     "client.ClientPlayerEntityMixin",
-    "client.DrawContextMixin"
+    "client.DrawContextMixin",
+    "client.MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

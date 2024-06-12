@@ -18,7 +18,6 @@ import xyz.fancyteam.ajimaji.item.AMItems;
 
 @Mixin(DrawContext.class)
 public class DrawContextMixin {
-
     @Unique
     private ItemStack ajimaji$drawingStack;
 

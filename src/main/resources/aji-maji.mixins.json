@@ -6,6 +6,8 @@
   "mixins": [
   ],
   "client": [
+    "client.BipedEntityModelMixin",
+    "client.ClientPlayerEntityMixin",
     "client.DrawContextMixin"
   ],
   "injectors": {

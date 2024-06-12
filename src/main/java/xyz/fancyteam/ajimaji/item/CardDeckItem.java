@@ -63,7 +63,7 @@ public class CardDeckItem extends Item implements FabricItem {
         entity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0f, 2.0f, 1.0f);
         entity.initialVelocity = entity.getVelocity();
         world.spawnEntity(entity);
-        stack.decrement(1);
+        stack.decrementUnlessCreative(1, user);
         return TypedActionResult.consume(user.getStackInHand(hand));
     }
 

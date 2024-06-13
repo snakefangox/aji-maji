@@ -5,7 +5,7 @@
     "settings": "aji-maji:top_hat",
     "biome_source": {
       "type": "minecraft:fixed",
-      "biome": "minecraft:plains"
+      "biome": "aji-maji:top_hat"
     }
   }
 }

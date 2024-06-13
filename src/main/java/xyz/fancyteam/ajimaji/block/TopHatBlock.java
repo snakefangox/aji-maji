@@ -13,6 +13,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.ActionResult;
@@ -24,9 +25,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 
+import xyz.fancyteam.ajimaji.AjiMaji;
 import xyz.fancyteam.ajimaji.block_entity.TopHatBlockEntity;
+import xyz.fancyteam.ajimaji.misc.AMDimensions;
 
 public class TopHatBlock extends BlockWithEntity {
     private static final VoxelShape OUTLINE_SHAPE = VoxelShapes.union( //
@@ -87,8 +91,21 @@ public class TopHatBlock extends BlockWithEntity {
 
     @Override
     public void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
-        // :3
-        super.onLandedUpon(world, state, pos, entity, fallDistance);
+        if (world instanceof ServerWorld serverWorld) {
+            ServerWorld topHatDim = serverWorld.getServer().getWorld(AMDimensions.TOP_HAT_DIMENSION);
+            if (topHatDim == null) {
+                AjiMaji.LOGGER.error("Missing top hat dimension {}", AMDimensions.TOP_HAT_DIMENSION);
+                return;
+            }
+
+            BlockPos entryPoint =
+                new BlockPos(world.random.nextInt(2000) - 1000, 256, world.random.nextInt(2000) - 1000);
+            
+            // TODO: entity tracking
+            entity.teleportTo(
+                new TeleportTarget(topHatDim, Vec3d.ofBottomCenter(entryPoint), Vec3d.ZERO, entity.getYaw(),
+                    entity.getPitch(), newEntity -> {}));
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package xyz.fancyteam.ajimaji;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.fabricmc.api.ModInitializer;
 
@@ -23,7 +24,7 @@ import xyz.fancyteam.ajimaji.recipe.AMRecipes;
 public class AjiMaji implements ModInitializer {
 
     public static final String MOD_ID = "aji-maji";
-    public static final Logger LOGGER = Logger.getLogger(MOD_ID);
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     @Override
     public void onInitialize() {

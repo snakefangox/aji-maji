@@ -5,7 +5,7 @@
   "legacy_random_source": false,
   "sea_level": 63,
   "default_block": {
-    "Name": "minecraft:stone"
+    "Name": "aji-maji:cloth_folds"
   },
   "default_fluid": {
     "Name": "minecraft:air"
@@ -33,8 +33,8 @@
       "type": "minecraft:add",
       "argument1": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": 0,
-        "to_y": 128,
+        "from_y": 32,
+        "to_y": 96,
         "from_value": 1,
         "to_value": -1
       },
@@ -46,8 +46,8 @@
           "input": {
             "type": "minecraft:noise",
             "noise": "aji-maji:cloth_folds",
-            "xz_scale": 2,
-            "y_scale": 1
+            "xz_scale": 1,
+            "y_scale": 3
           }
         }
       }

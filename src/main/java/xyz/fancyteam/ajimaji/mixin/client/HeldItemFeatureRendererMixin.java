@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import xyz.fancyteam.ajimaji.block.AMBlocks;
 import xyz.fancyteam.ajimaji.item.AMItems;
 
 @Mixin(HeldItemFeatureRenderer.class)

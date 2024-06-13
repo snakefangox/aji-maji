@@ -6,6 +6,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
+import xyz.fancyteam.ajimaji.block.AMBlocks;
 import xyz.fancyteam.ajimaji.item.AMItems;
 
 import static xyz.fancyteam.ajimaji.AjiMaji.id;
@@ -14,6 +15,7 @@ import static xyz.fancyteam.ajimaji.AjiMaji.tt;
 public class AMCreativeTabs {
     public static final ItemGroup MAIN =
         FabricItemGroup.builder().displayName(tt("itemGroup", "main")).entries((displayContext, entries) -> {
+            entries.addAll(AMBlocks.CREATIVE_TAB_ITEMS);
             entries.addAll(AMItems.CREATIVE_TAB_ITEMS);
         }).build();
 

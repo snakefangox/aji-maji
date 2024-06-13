@@ -20,7 +20,7 @@ import xyz.fancyteam.ajimaji.client.AjiMajiClient;
 import xyz.fancyteam.ajimaji.entity.PlayingCardEntity;
 
 public class PlayingCardEntityRenderer extends EntityRenderer<PlayingCardEntity> {
-    public static final Identifier TEXTURE = AjiMaji.id("textures/entity/playing_card.png");
+    public static final Identifier TEXTURE = AjiMaji.id("textures/item/playing_card.png");
     public static final RenderLayer LAYER = RenderLayer.getEntityCutout(TEXTURE);
 
     private final ModelPart model;

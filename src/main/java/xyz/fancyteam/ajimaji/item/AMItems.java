@@ -26,12 +26,15 @@ public class AMItems {
         new CardDeckItem(new Item.Settings());
     public static final BlockItem CARD_BOX =
         new BlockItem(AMBlocks.CARD_BOX, new Item.Settings());
+    public static final Item PLAYING_CARD =
+        new Item(new Item.Settings());
 
     public static void register() {
         register("top_hat", TOP_HAT);
         register("magic_carpet", MAGIC_CARPET);
         register("card_deck", CARD_DECK);
         register("card_box", CARD_BOX);
+        register("playing_card", PLAYING_CARD);
     }
 
     public static void register(String path, Item item) {

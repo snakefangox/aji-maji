@@ -1,0 +1,16 @@
+{
+  "item.card_deck.throw": {
+    "subtitle": "subtitles.aji-maji.throw_card",
+    "sounds": [
+      "aji-maji:card_throw_1",
+      "aji-maji:card_throw_2"
+    ]
+  },
+  "entity.playing_card.hit": {
+    "subtitle": "subtitles.aji-maji.card_hit",
+    "sounds": [
+      "aji-maji:card_hit_1",
+      "aji-maji:card_hit_2"
+    ]
+  }
+}

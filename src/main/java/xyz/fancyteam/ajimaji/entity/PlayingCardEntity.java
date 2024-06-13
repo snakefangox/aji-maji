@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import xyz.fancyteam.ajimaji.item.AMItems;
+import xyz.fancyteam.ajimaji.misc.AMSoundEvents;
 
 public class PlayingCardEntity extends PersistentProjectileEntity {
 
@@ -81,7 +82,7 @@ public class PlayingCardEntity extends PersistentProjectileEntity {
     // TODO: Custom hit sound
     @Override
     protected SoundEvent getHitSound() {
-        return super.getHitSound();
+        return AMSoundEvents.CARD_HIT;
     }
 
     public int getVariant() {

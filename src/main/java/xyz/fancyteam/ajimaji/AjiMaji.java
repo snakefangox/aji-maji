@@ -17,6 +17,7 @@ import xyz.fancyteam.ajimaji.misc.AMArmorMaterials;
 import xyz.fancyteam.ajimaji.misc.AMCreativeTabs;
 import xyz.fancyteam.ajimaji.misc.AMDensityFunctions;
 import xyz.fancyteam.ajimaji.misc.AMRegistries;
+import xyz.fancyteam.ajimaji.misc.AMSoundEvents;
 import xyz.fancyteam.ajimaji.recipe.AMRecipes;
 
 public class AjiMaji implements ModInitializer {
@@ -36,6 +37,7 @@ public class AjiMaji implements ModInitializer {
         AMDataComponents.register();
         AMRecipes.register();
         AMDensityFunctions.register();
+        AMSoundEvents.register();
     }
 
     public static Identifier id(String path) {

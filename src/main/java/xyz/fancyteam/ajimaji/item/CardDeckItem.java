@@ -6,11 +6,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import xyz.fancyteam.ajimaji.entity.PlayingCardEntity;
+import xyz.fancyteam.ajimaji.misc.AMSoundEvents;
 
 public class CardDeckItem extends Item implements FabricItem {
     public CardDeckItem(Item.Settings settings) {
@@ -64,6 +66,7 @@ public class CardDeckItem extends Item implements FabricItem {
         entity.initialVelocity = entity.getVelocity();
         world.spawnEntity(entity);
         stack.decrementUnlessCreative(1, user);
+        world.playSound(user, user.getX(), user.getY(), user.getZ(), AMSoundEvents.CARD_THROW, SoundCategory.PLAYERS, 1.0f, 0.9f + world.getRandom().nextFloat() * 0.2f);
         return TypedActionResult.consume(user.getStackInHand(hand));
     }
 

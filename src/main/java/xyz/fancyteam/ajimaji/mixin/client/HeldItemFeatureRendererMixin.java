@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import xyz.fancyteam.ajimaji.block.AMBlocks;
 import xyz.fancyteam.ajimaji.item.AMItems;
 
 @Mixin(HeldItemFeatureRenderer.class)
@@ -48,7 +49,7 @@ public class HeldItemFeatureRendererMixin<T extends LivingEntity> {
         return ajimaji$renderingEntity != null && ajimaji$renderingEntity.isUsingItem()
             && ajimaji$renderingEntity.getActiveItem().isOf(AMItems.CARD_DECK)
             && ajimaji$renderingEntity.getActiveHand() == Hand.OFF_HAND
-            ? AMItems.CARD_BOX.getDefaultStack() : stack;
+            ? AMBlocks.CARD_BOX.asItem().getDefaultStack() : stack;
     }
 
     @ModifyArg(
@@ -63,6 +64,6 @@ public class HeldItemFeatureRendererMixin<T extends LivingEntity> {
         return ajimaji$renderingEntity != null && ajimaji$renderingEntity.isUsingItem()
             && ajimaji$renderingEntity.getActiveItem().isOf(AMItems.CARD_DECK)
             && ajimaji$renderingEntity.getActiveHand() == Hand.MAIN_HAND
-            ? AMItems.CARD_BOX.getDefaultStack() : stack;
+            ? AMBlocks.CARD_BOX.asItem().getDefaultStack() : stack;
     }
 }

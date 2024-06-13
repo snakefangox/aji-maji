@@ -67,6 +67,7 @@ public class CardDeckItem extends Item implements FabricItem {
         world.spawnEntity(entity);
         stack.decrementUnlessCreative(1, user);
         world.playSound(user, user.getX(), user.getY(), user.getZ(), AMSoundEvents.CARD_THROW, SoundCategory.PLAYERS, 1.0f, 0.9f + world.getRandom().nextFloat() * 0.2f);
+        user.swingHand(hand);
         return TypedActionResult.consume(user.getStackInHand(hand));
     }
 

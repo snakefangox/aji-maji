@@ -3,9 +3,12 @@ package xyz.fancyteam.ajimaji.block_entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -13,14 +16,19 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
+import xyz.fancyteam.ajimaji.component.AMDataComponents;
+import xyz.fancyteam.ajimaji.component.TopHatIdComponent;
 import xyz.fancyteam.ajimaji.recipe.TopHatRecipe;
 import xyz.fancyteam.ajimaji.recipe.TopHatRecipeInput;
+import xyz.fancyteam.ajimaji.top_hat.TopHatManager;
 
 public class TopHatBlockEntity extends BlockEntity {
     private List<ItemStack> items = new ArrayList<>();
+    private UUID id = UUID.randomUUID();
 
     public TopHatBlockEntity(BlockPos pos, BlockState state) {
         super(AMBlockEntities.TOP_HAT, pos, state);
@@ -36,6 +44,8 @@ public class TopHatBlockEntity extends BlockEntity {
             NbtCompound item = (NbtCompound) element;
             items.add(ItemStack.fromNbtOrEmpty(registryLookup, item));
         }
+
+        id = nbt.getUuid("top_hat_id");
     }
 
     @Override
@@ -47,11 +57,27 @@ public class TopHatBlockEntity extends BlockEntity {
             itemsList.add(stack.encode(registryLookup));
         }
         nbt.put("items", itemsList);
+
+        nbt.putUuid("top_hat_id", id);
     }
 
     @Override
-    public void setStackNbt(ItemStack stack, RegistryWrapper.WrapperLookup registries) {
-        super.setStackNbt(stack, registries);
+    public void removeFromCopiedStackNbt(NbtCompound nbt) {
+        super.removeFromCopiedStackNbt(nbt);
+        nbt.remove("top_hat_id");
+    }
+
+    @Override
+    protected void readComponents(ComponentsAccess components) {
+        super.readComponents(components);
+        TopHatIdComponent component = components.get(AMDataComponents.TOP_HAT_ID);
+        if (component != null) id = component.topHatId();
+    }
+
+    @Override
+    protected void addComponents(ComponentMap.Builder componentMapBuilder) {
+        super.addComponents(componentMapBuilder);
+        componentMapBuilder.add(AMDataComponents.TOP_HAT_ID, new TopHatIdComponent(id));
     }
 
     public void insertItem(ItemStack stack) {
@@ -76,6 +102,12 @@ public class TopHatBlockEntity extends BlockEntity {
             dropStack(stack);
         }
         items.clear();
+    }
+
+    public void insertEntity(Entity entity) {
+        if (world instanceof ServerWorld world) {
+            TopHatManager.insertEntity(world.getServer(), id, entity);
+        }
     }
 
     private void dropStack(ItemStack stack) {

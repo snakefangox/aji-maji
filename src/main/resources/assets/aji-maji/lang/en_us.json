@@ -10,5 +10,10 @@
 
   "entity.aji-maji.magic_carpet": "Magic Carpet",
 
-  "message.aji-maji.not_carpet_owner": "You don't own this carpet!"
+  "message.aji-maji.not_carpet_owner": "You don't own this carpet!",
+
+  "tooltip.aji-maji.top_hat.id": "Top Hat Id: %s",
+  "tooltip.aji-maji.top_hat.id.none": "None",
+
+  "msg.aji-maji.top_hat.entity_missing": "That creature seems to have disappeared"
 }

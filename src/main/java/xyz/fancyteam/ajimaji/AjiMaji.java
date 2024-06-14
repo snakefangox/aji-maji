@@ -20,6 +20,8 @@ import xyz.fancyteam.ajimaji.misc.AMDensityFunctions;
 import xyz.fancyteam.ajimaji.misc.AMRegistries;
 import xyz.fancyteam.ajimaji.misc.AMSoundEvents;
 import xyz.fancyteam.ajimaji.recipe.AMRecipes;
+import xyz.fancyteam.ajimaji.top_hat.TopHatManager;
+import xyz.fancyteam.ajimaji.util.ServerTaskQueue;
 
 public class AjiMaji implements ModInitializer {
 
@@ -39,13 +41,16 @@ public class AjiMaji implements ModInitializer {
         AMRecipes.register();
         AMDensityFunctions.register();
         AMSoundEvents.register();
+
+        ServerTaskQueue.init();
+        TopHatManager.init();
     }
 
     public static Identifier id(String path) {
         return Identifier.of(MOD_ID, path);
     }
 
-    public static MutableText tt(String prefix, String suffix) {
-        return Text.translatable(prefix + "." + MOD_ID + "." + suffix);
+    public static MutableText tt(String prefix, String suffix, Object... args) {
+        return Text.translatable(prefix + "." + MOD_ID + "." + suffix, args);
     }
 }

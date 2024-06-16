@@ -117,10 +117,10 @@ public class PlayingCardEntity extends PersistentProjectileEntity {
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt) {
+    public void writeCustomDataToNbt(NbtCompound nbt) {
+        super.writeCustomDataToNbt(nbt);
         nbt.putInt("card_variant", getVariant());
         nbt.putInt("card_state", getStateValue());
-        return super.writeNbt(nbt);
     }
 
     public enum State {

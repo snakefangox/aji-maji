@@ -16,8 +16,10 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
@@ -32,19 +34,22 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.TeleportTarget;
+import net.minecraft.world.chunk.WorldChunk;
 
 import xyz.fancyteam.ajimaji.AjiMaji;
 import xyz.fancyteam.ajimaji.misc.AMChunkTicketTypes;
 import xyz.fancyteam.ajimaji.misc.AMDimensions;
+import xyz.fancyteam.ajimaji.mixin.EntityAccessor;
 import xyz.fancyteam.ajimaji.util.ServerTaskQueue;
 
 public class TopHatManager extends PersistentState {
     private static final String ID = "aji-maji/top_hat";
     private static final Type<TopHatManager> TYPE = new Type<>(TopHatManager::new, TopHatManager::new, null);
-    private static final List<Retrieval> PENDING_RETRIEVALS = new ArrayList<>();
+    private static final List<Removal> PENDING_REMOVALS = new ArrayList<>();
 
-    private record Retrieval(TopHatRetrieveListener listener, UUID entityId, ChunkPos pos) {
-    }
+    private record Removal(UUID entityId, ChunkPos pos) {}
+
+    private record EntityData(EntityType<?> type, NbtCompound nbt, ChunkPos pos) {}
 
     public static void init() {
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(
@@ -59,32 +64,14 @@ public class TopHatManager extends PersistentState {
             Entity.RemovalReason reason = entity.getRemovalReason();
             if (world instanceof ServerWorld serverWorld && world.getRegistryKey() == AMDimensions.TOP_HAT_DIMENSION &&
                 (reason == null || reason.shouldSave())) {
-                getInstanceUnchecked(serverWorld).putEntityChunk(entity);
+                getInstanceUnchecked(serverWorld).storeEntity(entity);
             }
         });
 
+        // Wait for the entity's chunk to load, so we can remove the entity that has been moved to the other dimension
         ServerChunkEvents.CHUNK_LOAD.register((world, chunk) -> {
-            if (world.getRegistryKey() == AMDimensions.TOP_HAT_DIMENSION) {
-                Iterator<Retrieval> iter = PENDING_RETRIEVALS.iterator();
-                while (iter.hasNext()) {
-                    Retrieval retrieval = iter.next();
-                    if (chunk.getPos().equals(retrieval.pos)) {
-                        iter.remove();
-                        Entity entity = world.getEntity(retrieval.entityId);
-                        if (entity != null) {
-                            retrieval.listener.acceptRetrieved(entity);
-                        } else {
-                            ServerTaskQueue.submit(2, () -> {
-                                Entity retrieved = world.getEntity(retrieval.entityId);
-                                if (retrieved != null) {
-                                    retrieval.listener.acceptRetrieved(retrieved);
-                                } else {
-                                    retrieval.listener.notifyMissing();
-                                }
-                            });
-                        }
-                    }
-                }
+            if (world instanceof ServerWorld serverWorld && world.getRegistryKey() == AMDimensions.TOP_HAT_DIMENSION) {
+                getInstanceUnchecked(serverWorld).onChunkLoad(serverWorld, chunk);
             }
         });
     }
@@ -92,14 +79,8 @@ public class TopHatManager extends PersistentState {
     public static void insertEntity(MinecraftServer server, UUID topHatId, Entity initialEntity) {
         ServerWorld topHatDim = getTopHatDim(server);
         if (topHatDim == null) return;
-        Random random = topHatDim.random;
 
-        BlockPos entryPoint = new BlockPos(random.nextInt(2000) - 1000, 256, random.nextInt(2000) - 1000);
-
-        initialEntity.teleportTo(
-            new TeleportTarget(topHatDim, Vec3d.ofBottomCenter(entryPoint), Vec3d.ZERO, initialEntity.getYaw(),
-                initialEntity.getPitch(),
-                newEntity -> getInstanceUnchecked(topHatDim).insertEntity(topHatId, newEntity)));
+        getInstanceUnchecked(topHatDim).insertEntity(topHatDim, topHatId, initialEntity);
     }
 
     public static boolean retrieveEntity(MinecraftServer server, UUID topHatId, ServerWorld targetWorld,
@@ -107,19 +88,7 @@ public class TopHatManager extends PersistentState {
         ServerWorld topHatDim = getTopHatDim(server);
         if (topHatDim == null) return false;
 
-        return getInstanceUnchecked(topHatDim).retrieveEntity(topHatDim, topHatId, new TopHatRetrieveListener() {
-            @Override
-            public void acceptRetrieved(Entity retrieved) {
-                retrieved.teleportTo(
-                    new TeleportTarget(targetWorld, targetPos, Vec3d.ZERO, retrieved.getYaw(), retrieved.getPitch(),
-                        listener::acceptRetrieved));
-            }
-
-            @Override
-            public void notifyMissing() {
-                listener.notifyMissing();
-            }
-        });
+        return getInstanceUnchecked(topHatDim).retrieveEntity(topHatDim, topHatId);
     }
 
     private static @Nullable ServerWorld getTopHatDim(MinecraftServer server) {
@@ -135,7 +104,7 @@ public class TopHatManager extends PersistentState {
     }
 
     private final Map<UUID, Deque<UUID>> topHatQueues = new LinkedHashMap<>();
-    private final Map<UUID, ChunkPos> entityChunks = new LinkedHashMap<>();
+    private final Map<UUID, EntityData> entityDatas = new LinkedHashMap<>();
 
     private TopHatManager() {
 
@@ -168,33 +137,46 @@ public class TopHatManager extends PersistentState {
 
         nbt.put("top_hats", topHats);
 
-        NbtCompound entityChunksNbt = new NbtCompound();
-        for (var entry : entityChunks.entrySet()) {
+        NbtCompound entityDatasNbt = new NbtCompound();
+        for (var entry : entityDatas.entrySet()) {
+            EntityData data = entry.getValue();
             NbtCompound entityChunk = new NbtCompound();
-            entityChunk.putInt("x", entry.getValue().x);
-            entityChunk.putInt("z", entry.getValue().z);
-            entityChunksNbt.put(entry.getKey().toString(), entityChunk);
+            entityChunk.putInt("x", data.pos.x);
+            entityChunk.putInt("z", data.pos.z);
+            entityChunk.putString("type", EntityType.getId(data.type).toString());
+            entityChunk.put("data", data.nbt);
+            entityDatasNbt.put(entry.getKey().toString(), entityChunk);
         }
 
-        nbt.put("entity_chunks", entityChunksNbt);
+        nbt.put("entity_datas", entityDatasNbt);
 
         return nbt;
     }
 
-    private void insertEntity(UUID topHatId, Entity entityInTopHatDimension) {
-        Deque<UUID> entityQueue = topHatQueues.computeIfAbsent(topHatId, _k -> new ArrayDeque<>());
-        entityQueue.add(entityInTopHatDimension.getUuid());
-        putEntityChunk(entityInTopHatDimension);
+    private void insertEntity(ServerWorld topHatDim, UUID topHatId, Entity initialEntity) {
+        Random random = topHatDim.random;
+        BlockPos entryPoint = new BlockPos(random.nextInt(2000) - 1000, 256, random.nextInt(2000) - 1000);
+
+        storeEntity(initialEntity);
+        topHatQueues.computeIfAbsent(topHatId, _k -> new ArrayDeque<>()).add(initialEntity.getUuid());
+
+        initialEntity.teleportTo(
+            new TeleportTarget(topHatDim, Vec3d.ofBottomCenter(entryPoint), Vec3d.ZERO, initialEntity.getYaw(),
+                initialEntity.getPitch(), newEntity -> {}));
     }
 
-    private boolean retrieveEntity(ServerWorld topHatDim, UUID topHatId, TopHatRetrieveListener onRetrieve) {
+    private boolean retrieveEntity(ServerWorld topHatDim, UUID topHatId, TeleportTarget target) {
         Deque<UUID> entityQueue = topHatQueues.get(topHatId);
         if (entityQueue == null) return false;
 
-        return retrieveEntity(topHatDim, entityQueue, onRetrieve);
+        while (!entityQueue.isEmpty()) {
+            if (retrieveEntity(topHatDim, entityQueue, target)) return true;
+        }
+
+        return false;
     }
 
-    private boolean retrieveEntity(ServerWorld topHatDim, Deque<UUID> entityQueue, TopHatRetrieveListener onRetrieve) {
+    private boolean retrieveEntity(ServerWorld topHatDim, Deque<UUID> entityQueue, TeleportTarget target) {
         if (entityQueue.isEmpty()) return false;
 
         UUID entityId = entityQueue.poll();
@@ -202,22 +184,62 @@ public class TopHatManager extends PersistentState {
 
         Entity retrieved = topHatDim.getEntity(entityId);
         if (retrieved == null) {
-            ChunkPos entityChunk = entityChunks.remove(entityId);
-            if (entityChunk != null) {
+            EntityData entityData = entityDatas.remove(entityId);
+            if (entityData != null) {
                 topHatDim.getChunkManager()
-                    .addTicket(AMChunkTicketTypes.TOP_HAT_PRE_TELEPORT, entityChunk, 0, entityId);
-            }
+                    .addTicket(AMChunkTicketTypes.TOP_HAT_PRE_TELEPORT, entityData.pos, 0, entityId);
 
-            PENDING_RETRIEVALS.add(new Retrieval(onRetrieve, entityId, entityChunk));
+                PENDING_REMOVALS.add(new Removal(entityId, entityData.pos));
+
+                Entity deserialized = entityData.type.create(target.world());
+                if (deserialized == null) return false;
+                deserialized.readNbt(entityData.nbt);
+                deserialized.setPos
+            } else {
+                AjiMaji.LOGGER.warn(
+                    "Unable to find entity {} in top hat dimension or storage, maybe they've already been removed?",
+                    entityId);
+                return false;
+            }
         } else {
-            entityChunks.remove(entityId);
-            onRetrieve.acceptRetrieved(retrieved);
+            entityDatas.remove(entityId);
+            retrieved.teleportTo(target);
         }
 
-        return true;
+        return false;
     }
 
-    private void putEntityChunk(Entity entity) {
-        entityChunks.put(entity.getUuid(), entity.getChunkPos());
+    private void storeEntity(Entity entity) {
+        if (!(entity instanceof PlayerEntity) && entity.getType().isSaveable()) {
+            NbtCompound nbt = new NbtCompound();
+            if (entity.saveNbt(nbt)) {
+                entityDatas.put(entity.getUuid(), new EntityData(entity.getType(), nbt, entity.getChunkPos()));
+            }
+        }
+    }
+
+    private void onChunkLoad(ServerWorld world, WorldChunk chunk) {
+        Iterator<Removal> iter = PENDING_REMOVALS.iterator();
+        while (iter.hasNext()) {
+            Removal removal = iter.next();
+            if (chunk.getPos().equals(removal.pos)) {
+                iter.remove();
+                Entity entity = world.getEntity(removal.entityId);
+                if (entity != null) {
+                    ((EntityAccessor) entity).aji_maji_removeFromDimension();
+                } else {
+                    ServerTaskQueue.submit(2, () -> {
+                        Entity retrieved = world.getEntity(removal.entityId);
+                        if (retrieved != null) {
+                            ((EntityAccessor) retrieved).aji_maji_removeFromDimension();
+                        } else {
+                            AjiMaji.LOGGER.warn(
+                                "Unable to find entity {} in top hat dimension, they may have been duplicated",
+                                removal.entityId);
+                        }
+                    });
+                }
+            }
+        }
     }
 }

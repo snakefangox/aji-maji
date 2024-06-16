@@ -4,6 +4,7 @@
   "package": "xyz.fancyteam.ajimaji.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "EntityAccessor",
     "LivingEntityMixin"
   ],
   "client": [

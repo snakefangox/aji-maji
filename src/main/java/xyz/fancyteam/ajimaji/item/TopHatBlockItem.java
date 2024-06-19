@@ -3,7 +3,6 @@ package xyz.fancyteam.ajimaji.item;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorMaterial;
@@ -16,11 +15,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.TeleportTarget;
 
 import xyz.fancyteam.ajimaji.component.AMDataComponents;
 import xyz.fancyteam.ajimaji.component.TopHatIdComponent;
 import xyz.fancyteam.ajimaji.top_hat.TopHatManager;
-import xyz.fancyteam.ajimaji.top_hat.TopHatRetrieveListener;
 
 import static xyz.fancyteam.ajimaji.AjiMaji.tt;
 
@@ -41,21 +42,16 @@ public class TopHatBlockItem extends ArmorBlockItem {
         if (player == null || !player.isSneaking()) {
             if (context.getWorld() instanceof ServerWorld world) {
                 TopHatIdComponent component = TopHatIdComponent.getOrCreate(context.getStack());
-                boolean result =
-                    TopHatManager.retrieveEntity(world.getServer(), component.topHatId(), world, context.getHitPos(),
-                        new TopHatRetrieveListener() {
-                            @Override
-                            public void acceptRetrieved(Entity retrieved) {
-                                // TODO: particle effects
-                            }
+                Vec3d entityPos;
+                if (context.getSide() == Direction.UP) {
+                    entityPos = context.getHitPos();
+                } else {
+                    entityPos = Vec3d.ofBottomCenter(context.getBlockPos().offset(context.getSide()));
+                }
 
-                            @Override
-                            public void notifyMissing() {
-                                if (player != null) {
-                                    player.sendMessage(tt("msg", "top_hat.entity_missing"), true);
-                                }
-                            }
-                        });
+                boolean result =
+                    TopHatManager.retrieveEntity(world.getServer(), component.topHatId(),
+                        new TeleportTarget(world, entityPos, Vec3d.ZERO, 0f, 0f, entity -> {}));
                 return result ? ActionResult.SUCCESS : ActionResult.FAIL;
             } else {
                 return ActionResult.CONSUME;

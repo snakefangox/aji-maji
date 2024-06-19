@@ -83,12 +83,11 @@ public class TopHatManager extends PersistentState {
         getInstanceUnchecked(topHatDim).insertEntity(topHatDim, topHatId, initialEntity);
     }
 
-    public static boolean retrieveEntity(MinecraftServer server, UUID topHatId, ServerWorld targetWorld,
-                                         Vec3d targetPos, TopHatRetrieveListener listener) {
+    public static boolean retrieveEntity(MinecraftServer server, UUID topHatId, TeleportTarget target) {
         ServerWorld topHatDim = getTopHatDim(server);
         if (topHatDim == null) return false;
 
-        return getInstanceUnchecked(topHatDim).retrieveEntity(topHatDim, topHatId);
+        return getInstanceUnchecked(topHatDim).retrieveEntity(topHatDim, topHatId, target);
     }
 
     private static @Nullable ServerWorld getTopHatDim(MinecraftServer server) {
@@ -191,10 +190,18 @@ public class TopHatManager extends PersistentState {
 
                 PENDING_REMOVALS.add(new Removal(entityId, entityData.pos));
 
-                Entity deserialized = entityData.type.create(target.world());
+                ServerWorld targetWorld = target.world();
+                Entity deserialized = entityData.type.create(targetWorld);
                 if (deserialized == null) return false;
+
                 deserialized.readNbt(entityData.nbt);
-                deserialized.setPos
+                deserialized.refreshPositionAndAngles(target.pos().x, target.pos().y, target.pos().z, target.yaw(),
+                    target.pitch());
+                deserialized.setVelocity(target.velocity());
+                targetWorld.onDimensionChanged(deserialized);
+                targetWorld.resetIdleTimeout();
+                target.postDimensionTransition().onTransition(deserialized);
+                return true;
             } else {
                 AjiMaji.LOGGER.warn(
                     "Unable to find entity {} in top hat dimension or storage, maybe they've already been removed?",
@@ -204,9 +211,8 @@ public class TopHatManager extends PersistentState {
         } else {
             entityDatas.remove(entityId);
             retrieved.teleportTo(target);
+            return true;
         }
-
-        return false;
     }
 
     private void storeEntity(Entity entity) {

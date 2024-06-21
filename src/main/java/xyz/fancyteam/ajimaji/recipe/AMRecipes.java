@@ -12,6 +12,9 @@ public class AMRecipes {
         Registry.register(Registries.RECIPE_TYPE, id("top_hat"), TopHatRecipe.TYPE);
         Registry.register(Registries.RECIPE_SERIALIZER, id("top_hat"), TopHatRecipe.SERIALIZER);
 
+        Registry.register(Registries.RECIPE_SERIALIZER, id("crafting_special_top_hat"),
+            TopHatCraftingRecipe.SERIALIZER);
+
         Registry.register(AMRegistries.TOP_HAT_RECIPE_OUTPUT, id("item"), TopHatRecipeResultItem.TYPE);
         Registry.register(AMRegistries.TOP_HAT_RECIPE_OUTPUT, id("any_of_tag"), TopHatRecipeResultAnyOfTag.TYPE);
         Registry.register(AMRegistries.TOP_HAT_RECIPE_OUTPUT, id("any_of"), TopHatRecipeResultAnyOf.TYPE);

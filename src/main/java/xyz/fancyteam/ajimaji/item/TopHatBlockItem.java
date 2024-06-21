@@ -3,6 +3,7 @@ package xyz.fancyteam.ajimaji.item;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorMaterial;
@@ -62,6 +63,10 @@ public class TopHatBlockItem extends ArmorBlockItem {
 
     @Override
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
+        return useOnAnyEntity(stack, entity);
+    }
+
+    public ActionResult useOnAnyEntity(ItemStack stack, Entity entity) {
         if (entity.getWorld() instanceof ServerWorld world) {
             TopHatIdComponent component = TopHatIdComponent.getOrCreate(stack);
             TopHatManager.insertEntity(world.getServer(), component.topHatId(), entity);

@@ -14,12 +14,14 @@ import org.jetbrains.annotations.Nullable;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
@@ -30,6 +32,7 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -40,6 +43,7 @@ import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.chunk.WorldChunk;
 
 import xyz.fancyteam.ajimaji.AjiMaji;
+import xyz.fancyteam.ajimaji.item.AMItems;
 import xyz.fancyteam.ajimaji.misc.AMChunkTicketTypes;
 import xyz.fancyteam.ajimaji.misc.AMDimensions;
 import xyz.fancyteam.ajimaji.mixin.EntityAccessor;
@@ -55,6 +59,16 @@ public class TopHatManager extends PersistentState {
     private record EntityData(EntityType<?> type, NbtCompound nbt, ChunkPos pos) {}
 
     public static void init() {
+        UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+            // make sure top hats can pick up entities that would otherwise cancel interaction
+            ItemStack stack = player.getStackInHand(hand);
+            if (stack.isOf(AMItems.TOP_HAT)) {
+                return AMItems.TOP_HAT.useOnAnyEntity(stack, entity);
+            }
+
+            return ActionResult.PASS;
+        });
+
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(
             (entity, source, amount) -> {
                 RegistryEntry<DamageType> damageType = source.getTypeRegistryEntry();

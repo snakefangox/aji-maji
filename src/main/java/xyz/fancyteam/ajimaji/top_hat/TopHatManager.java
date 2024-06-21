@@ -170,12 +170,11 @@ public class TopHatManager extends PersistentState {
         Random random = topHatDim.random;
         BlockPos entryPoint = new BlockPos(random.nextInt(2000) - 1000, 256, random.nextInt(2000) - 1000);
 
-        storeEntity(initialEntity);
         topHatQueues.computeIfAbsent(topHatId, _k -> new ArrayDeque<>()).add(initialEntity.getUuid());
 
         initialEntity.teleportTo(
             new TeleportTarget(topHatDim, Vec3d.ofBottomCenter(entryPoint), Vec3d.ZERO, initialEntity.getYaw(),
-                initialEntity.getPitch(), newEntity -> {}));
+                initialEntity.getPitch(), this::storeEntity));
 
         markDirty();
     }
@@ -203,10 +202,10 @@ public class TopHatManager extends PersistentState {
             if (entityData != null) {
                 markDirty();
 
+                PENDING_REMOVALS.add(new Removal(entityId, entityData.pos));
+
                 topHatDim.getChunkManager()
                     .addTicket(AMChunkTicketTypes.TOP_HAT_PRE_TELEPORT, entityData.pos, 0, entityId);
-
-                PENDING_REMOVALS.add(new Removal(entityId, entityData.pos));
 
                 ServerWorld targetWorld = target.world();
                 Entity deserialized = entityData.type.create(targetWorld);
@@ -238,6 +237,7 @@ public class TopHatManager extends PersistentState {
         if (!(entity instanceof PlayerEntity) && entity.getType().isSaveable()) {
             NbtCompound nbt = new NbtCompound();
             if (entity.saveNbt(nbt)) {
+                AjiMaji.LOGGER.debug("Storing entity: {} @ {}", entity, entity.getChunkPos());
                 entityDatas.put(entity.getUuid(), new EntityData(entity.getType(), nbt, entity.getChunkPos()));
                 markDirty();
             }
@@ -249,14 +249,18 @@ public class TopHatManager extends PersistentState {
         while (iter.hasNext()) {
             Removal removal = iter.next();
             if (chunk.getPos().equals(removal.pos)) {
+                AjiMaji.LOGGER.debug("Found removal: {}", removal);
                 iter.remove();
                 Entity entity = world.getEntity(removal.entityId);
                 if (entity != null) {
+                    AjiMaji.LOGGER.debug("Removing entity {}", entity.getUuid());
                     ((EntityAccessor) entity).aji_maji_removeFromDimension();
                 } else {
                     ServerTaskQueue.submit(2, () -> {
+                        AjiMaji.LOGGER.debug("Waiting for removal: {}", removal);
                         Entity retrieved = world.getEntity(removal.entityId);
                         if (retrieved != null) {
+                            AjiMaji.LOGGER.debug("Removing entity {}", retrieved.getUuid());
                             ((EntityAccessor) retrieved).aji_maji_removeFromDimension();
                             markDirty();
                         } else {

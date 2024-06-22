@@ -63,6 +63,8 @@ public class TopHatBlockItem extends ArmorBlockItem {
 
     @Override
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
+        if (!user.canModifyBlocks()) return ActionResult.PASS;
+
         return useOnAnyEntity(stack, entity);
     }
 

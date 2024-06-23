@@ -6,11 +6,12 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.packet.c2s.play.BoatPaddleStateC2SPacket;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
@@ -26,6 +27,9 @@ import xyz.fancyteam.ajimaji.item.AMItems;
 import java.util.UUID;
 
 public class MagicCarpetEntity extends Entity {
+    private static final TrackedData<Boolean> GROUNDED =
+        DataTracker.registerData(MagicCarpetEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+
     private UUID owner;
 
     public MagicCarpetEntity(EntityType<?> type, World world) {
@@ -46,6 +50,7 @@ public class MagicCarpetEntity extends Entity {
 
     @Override
     protected void initDataTracker(DataTracker.Builder builder) {
+        builder.add(GROUNDED, true);
     }
 
     @Override
@@ -106,15 +111,21 @@ public class MagicCarpetEntity extends Entity {
         super.tick();
         if (isLogicalSideForUpdatingMovement()) {
             updateTrackedPosition(getX(), getY(), getZ());
-        }
-
-        if (isLogicalSideForUpdatingMovement()) {
             updateVelocity();
             move(MovementType.SELF, this.getVelocity());
         } else {
             setVelocity(Vec3d.ZERO);
         }
+
+        if (getWorld().getTime() % 13 == 0) {checkPeriodic();}
     }
+
+    private void checkPeriodic() {
+        var onGround = !getWorld().isBlockSpaceEmpty(this, getBoundingBox().offset(0, -0.1, 0));
+        dataTracker.set(GROUNDED, onGround);
+    }
+
+    private static final float VERTICAL_DEADZONE = 15F;
 
     private void updateVelocity() {
         if (hasControllingPassenger()) {
@@ -123,11 +134,25 @@ public class MagicCarpetEntity extends Entity {
 
             var riderInput = new Vec3d(controller.sidewaysSpeed, 0, controller.forwardSpeed).normalize();
             var movement = riderInput.rotateY((float) (-controller.getYaw() * (Math.PI / 180.0F)));
-            if (controller.getPitch() < -15.0 || controller.getPitch() > 15.0) {
-                movement = movement.add(0, (controller.getPitch() / -75F) * controller.forwardSpeed, 0);
+            if (controller.getPitch() < -VERTICAL_DEADZONE || controller.getPitch() > VERTICAL_DEADZONE) {
+                movement =
+                    movement.add(0, (controller.getPitch() / -(90F - VERTICAL_DEADZONE)) * controller.forwardSpeed, 0);
             }
             setVelocity(movement);
+
+            float yawLerp = MathHelper.lerp(0.3F, getYaw(), controller.getYaw());
+            setYaw(yawLerp);
+        } else {
+            boolean notSupportingWeight = getWorld().getOtherEntities(this, getBoundingBox().expand(0.5)).isEmpty();
+            if (notSupportingWeight) {
+                setVelocity(new Vec3d(0, -getFinalGravity(), 0));
+            }
         }
+    }
+
+    @Override
+    protected double getGravity() {
+        return 0.04;
     }
 
     private boolean checkOwnerAndNotify(PlayerEntity player) {
@@ -163,5 +188,9 @@ public class MagicCarpetEntity extends Entity {
 
     public void setOwner(UUID owner) {
         this.owner = owner;
+    }
+
+    public boolean isGrounded() {
+        return this.dataTracker.get(GROUNDED);
     }
 }

@@ -13,6 +13,8 @@ import net.minecraft.util.Identifier;
 
 import net.minecraft.util.math.Direction;
 
+import net.minecraft.util.math.RotationAxis;
+
 import xyz.fancyteam.ajimaji.AjiMaji;
 import xyz.fancyteam.ajimaji.entity.MagicCarpetEntity;
 
@@ -36,10 +38,11 @@ public class MagicCarpetRenderer extends EntityRenderer<MagicCarpetEntity> {
 
         matrices.push();
         matrices.scale(0.125F, 0.125F, 0.125F);
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180F - yaw));
 
         for (int z = 0; z < 16; z++) {
-            float wave = entity.age + tickDelta + z;
-            float height = (float) (Math.sin(wave / 4.0F) / 4.0F);
+            float wave = entity.isGrounded() ? 0 : entity.age + tickDelta + z;
+            float height = (float) (Math.sin(wave / 4.0F) / 3.0F);
             drawCarpetSegment(matrices, light, vertexConsumer, 8 - z, height, (z + 1) / 16.0F);
         }
 

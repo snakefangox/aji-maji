@@ -44,6 +44,7 @@ import net.minecraft.world.chunk.WorldChunk;
 
 import xyz.fancyteam.ajimaji.AjiMaji;
 import xyz.fancyteam.ajimaji.item.AMItems;
+import xyz.fancyteam.ajimaji.item.TopHatBlockItem;
 import xyz.fancyteam.ajimaji.misc.AMChunkTicketTypes;
 import xyz.fancyteam.ajimaji.misc.AMDimensions;
 import xyz.fancyteam.ajimaji.mixin.EntityAccessor;
@@ -65,7 +66,7 @@ public class TopHatManager extends PersistentState {
             // make sure top hats can pick up entities that would otherwise cancel interaction
             ItemStack stack = player.getStackInHand(hand);
             if (stack.isOf(AMItems.TOP_HAT)) {
-                return AMItems.TOP_HAT.useOnAnyEntity(stack, entity);
+                return TopHatBlockItem.insertEntity(stack, entity);
             }
 
             return ActionResult.PASS;

@@ -10,7 +10,7 @@ import static xyz.fancyteam.ajimaji.AjiMaji.id;
 public class AMEntities {
     public static final EntityType<MagicCarpetEntity> MAGIC_CARPET =
         EntityType.Builder.create(MagicCarpetEntity::new, SpawnGroup.MISC)
-            .dimensions(1.25f, 0.25f).build();
+            .dimensions(1.25f, 1F/16F).build();
 
     public static final EntityType<PlayingCardEntity> PLAYING_CARD =
         EntityType.Builder.<PlayingCardEntity>create(PlayingCardEntity::new, SpawnGroup.MISC)

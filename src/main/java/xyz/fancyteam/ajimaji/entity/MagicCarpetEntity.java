@@ -3,13 +3,22 @@ package xyz.fancyteam.ajimaji.entity;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.c2s.play.BoatPaddleStateC2SPacket;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import org.jetbrains.annotations.Nullable;
+
 import xyz.fancyteam.ajimaji.AjiMaji;
 import xyz.fancyteam.ajimaji.component.AMDataComponents;
 import xyz.fancyteam.ajimaji.item.AMItems;
@@ -59,22 +68,74 @@ public class MagicCarpetEntity extends Entity {
 
         if (actionResult != ActionResult.PASS) {
             return actionResult;
-        } else if (!getWorld().isClient && player.isSneaking() && player.getStackInHand(hand).isEmpty()) {
-            tryPickUpCarpet(player, hand);
+        }
+
+        if (getWorld().isClient) {
             return ActionResult.SUCCESS;
+        }
+
+        if (!checkOwnerAndNotify(player)) {
+            return ActionResult.PASS;
+        }
+
+        if (player.getStackInHand(hand).isEmpty() && player.isSneaking()) {
+            var stack = writeDataToItemStack();
+            player.setStackInHand(hand, stack);
+            discard();
+
+            return ActionResult.SUCCESS;
+        }
+
+        if (!player.isSneaking()) {
+            return player.startRiding(this) ? ActionResult.CONSUME : ActionResult.PASS;
         }
 
         return ActionResult.PASS;
     }
 
-    private void tryPickUpCarpet(PlayerEntity player, Hand hand) {
+    @Nullable
+    @Override
+    public LivingEntity getControllingPassenger() {
+        if (getFirstPassenger() instanceof LivingEntity livingPassenger) return livingPassenger;
+
+        return null;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (isLogicalSideForUpdatingMovement()) {
+            updateTrackedPosition(getX(), getY(), getZ());
+        }
+
+        if (isLogicalSideForUpdatingMovement()) {
+            updateVelocity();
+            move(MovementType.SELF, this.getVelocity());
+        } else {
+            setVelocity(Vec3d.ZERO);
+        }
+    }
+
+    private void updateVelocity() {
+        if (hasControllingPassenger()) {
+            LivingEntity controller = getControllingPassenger();
+            assert controller != null;
+
+            var riderInput = new Vec3d(controller.sidewaysSpeed, 0, controller.forwardSpeed).normalize();
+            var movement = riderInput.rotateY((float) (-controller.getYaw() * (Math.PI / 180.0F)));
+            if (controller.getPitch() < -15.0 || controller.getPitch() > 15.0) {
+                movement = movement.add(0, (controller.getPitch() / -75F) * controller.forwardSpeed, 0);
+            }
+            setVelocity(movement);
+        }
+    }
+
+    private boolean checkOwnerAndNotify(PlayerEntity player) {
         if (!player.getUuid().equals(getOwner())) {
             player.sendMessage(AjiMaji.tt("message", "not_carpet_owner"), true);
-        } else {
-            var stack = writeDataToItemStack();
-            player.setStackInHand(hand, stack);
-            discard();
+            return false;
         }
+        return true;
     }
 
     @Override

@@ -46,11 +46,7 @@ public class HeldItemFeatureRendererMixin<T extends LivingEntity> {
         index = 1
     )
     private ItemStack ajimaji$renderFakeCardBoxRight(ItemStack stack) {
-        return ajimaji$renderingEntity != null && ajimaji$renderingEntity.isUsingItem()
-            && ajimaji$renderingEntity.getActiveItem().isOf(AMItems.CARD_DECK)
-            ? ajimaji$renderingEntity.getActiveHand() == Hand.MAIN_HAND
-            ? AMItems.PLAYING_CARD.getDefaultStack() : AMItems.CARD_BOX.getDefaultStack()
-            : stack;
+        return ajimaji$getFakeStack(stack, Hand.MAIN_HAND);
     }
 
     @ModifyArg(
@@ -62,10 +58,20 @@ public class HeldItemFeatureRendererMixin<T extends LivingEntity> {
         index = 1
     )
     private ItemStack ajimaji$renderFakeCardBoxLeft(ItemStack stack) {
-        return ajimaji$renderingEntity != null && ajimaji$renderingEntity.isUsingItem()
-            && ajimaji$renderingEntity.getActiveItem().isOf(AMItems.CARD_DECK)
-            ? ajimaji$renderingEntity.getActiveHand() == Hand.OFF_HAND
-            ? AMItems.PLAYING_CARD.getDefaultStack() : AMItems.CARD_BOX.getDefaultStack()
-            : stack;
+        return ajimaji$getFakeStack(stack, Hand.OFF_HAND);
+    }
+
+    @Unique
+    private ItemStack ajimaji$getFakeStack(ItemStack stack, Hand hand) {
+        if (ajimaji$renderingEntity == null) {
+            return stack;
+        }
+        if (ajimaji$renderingEntity.isUsingItem() && ajimaji$renderingEntity.getActiveItem().isOf(AMItems.CARD_DECK)) {
+            return ajimaji$renderingEntity.getActiveHand() == hand ? AMItems.PLAYING_CARD.getDefaultStack() : AMItems.CARD_BOX.getDefaultStack();
+        }
+        if (ajimaji$renderingEntity.getStackInHand(hand).isOf(AMItems.CARD_DECK)) {
+            return AMItems.CARD_BOX.getDefaultStack();
+        }
+        return stack;
     }
 }

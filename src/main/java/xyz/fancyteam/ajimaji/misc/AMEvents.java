@@ -7,6 +7,7 @@ import net.minecraft.network.message.MessageType;
 import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 
 import net.minecraft.text.Text;
@@ -15,6 +16,7 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import xyz.fancyteam.ajimaji.entity.MagicCarpetEntity;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
 
@@ -44,8 +46,9 @@ public class AMEvents {
                     .filter(b -> b.name().isPresent())
                     .min(Comparator.comparing(a -> d.apply(a.name().map(Text::getString).get(), finalMsg)));
                 if (target.isPresent()) {
-                    var pos = target.get().pos();
-                    magicCarpet.updateTrackedPosition(pos.getX(), pos.getY() + 2, pos.getZ());
+                    var pos = target.get().pos().add(0, 2, 0);
+                    magicCarpet.teleport((ServerWorld) magicCarpet.getWorld(), pos.getX(), pos.getY(), pos.getZ(),
+                        Collections.emptySet(), magicCarpet.getYaw(), magicCarpet.getPitch());
                     sender.getWorld()
                         .playSound(null, pos, AMSoundEvents.CARPET_TELEPORT, SoundCategory.NEUTRAL, 2F, 1F);
                     return false;

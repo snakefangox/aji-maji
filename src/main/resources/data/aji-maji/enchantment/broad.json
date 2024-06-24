@@ -1,0 +1,20 @@
+{
+  "supported_items": "aji-maji:magic_carpet",
+  "max_level": 8,
+  "weight": 10,
+  "anvil_cost": 4,
+  "description": {
+    "translate": "enchantment.aji-maji.broad"
+  },
+  "min_cost": {
+    "base": 10,
+    "per_level_above_first": 20
+  },
+  "max_cost": {
+    "base": 60,
+    "per_level_above_first": 20
+  },
+  "slots": [ ],
+  "effects": {
+  }
+}

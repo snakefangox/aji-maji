@@ -32,7 +32,7 @@ public class AMBlocks {
 
     public static void register() {
         register0("top_hat", TOP_HAT);
-        register1("card_box", CARD_BOX);
+        register0("card_box", CARD_BOX);
         register1("cloth_folds", CLOTH_FOLDS);
 
         registerCodec("top_hat", TopHatBlock.MAP_CODEC);

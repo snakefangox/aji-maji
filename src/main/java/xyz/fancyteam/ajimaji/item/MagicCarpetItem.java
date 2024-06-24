@@ -73,8 +73,9 @@ public class MagicCarpetItem extends Item {
                 boolean damagedThisTick =
                     player.age - ((DamageTrackerAccessor) player.getDamageTracker()).getAgeOnLastDamage() <= 1;
                 if (damagedThisTick) {
-                    var hit = world.raycast(new RaycastContext(player.getPos().add(0, 150, 0), player.getPos(),
-                        RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
+                    var hit = world.raycast(new RaycastContext(player.getPos().add(0, 150, 0),
+                        player.getPos().add(0, 15, 0), RaycastContext.ShapeType.COLLIDER,
+                        RaycastContext.FluidHandling.NONE, player));
                     var openPosition = hit.getPos().add(0, 2, 0);
                     var carpet = spawnCarpetFromItem(world, player, stack, Direction.UP, openPosition, slot, true);
 

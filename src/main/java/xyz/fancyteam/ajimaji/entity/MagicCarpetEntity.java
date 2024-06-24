@@ -221,10 +221,10 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
             if (groundedTicks > 0) dataTracker.set(GROUNDED_TICKS, getGroundedTicks() - 1);
         }
 
-        if (!getWorld().isClient && hasControllingPassenger() && false) {
-            var entities = getWorld().getOtherEntities(this, getBoundingBox().expand(2));
+        if (!getWorld().isClient && hasControllingPassenger()) {
+            var entities = getWorld().getOtherEntities(this, getBoundingBox().expand(0.2));
             for (var e : entities) {
-                if (!e.hasVehicle()) e.startRiding(this);
+                if (!e.hasVehicle() && !(e instanceof PlayerEntity)) e.startRiding(this);
             }
         }
     }
@@ -289,8 +289,9 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
         var attachmentBuilder = EntityAttachments.builder();
         for (int i = 0; i <= size; i++) {
             var t = (i / (size + 1F)) * Math.PI * 2.0;
-            var x = Math.sin(t) * sizeScale;
-            var z = Math.cos(t) * sizeScale;
+            var radius = sizeScale * 0.75F;
+            var x = Math.sin(t) * radius;
+            var z = Math.cos(t) * radius;
             attachmentBuilder.add(EntityAttachmentType.PASSENGER, (float) x, scaledDim.height(), (float) z);
         }
 

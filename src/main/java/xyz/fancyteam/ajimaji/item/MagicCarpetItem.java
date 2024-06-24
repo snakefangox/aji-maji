@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.Direction;
+
 import xyz.fancyteam.ajimaji.entity.AMEntities;
 import xyz.fancyteam.ajimaji.entity.MagicCarpetEntity;
 
@@ -54,5 +55,15 @@ public class MagicCarpetItem extends Item {
         }
 
         ctx.getWorld().spawnEntity(magicCarpet);
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public int getEnchantability() {
+        return 10;
     }
 }

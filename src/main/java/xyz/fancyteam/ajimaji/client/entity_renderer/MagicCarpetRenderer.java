@@ -1,6 +1,5 @@
 package xyz.fancyteam.ajimaji.client.entity_renderer;
 
-import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -41,8 +40,9 @@ public class MagicCarpetRenderer extends EntityRenderer<MagicCarpetEntity> {
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180F - yaw));
 
         for (int z = 0; z < 16; z++) {
-            float wave = entity.isGrounded() ? 0 : entity.age + tickDelta + z;
-            float height = (float) (Math.sin(wave / 4.0F) / 3.0F);
+            float groundSettle = 1F - (entity.getGroundedTicks() / (float) MagicCarpetEntity.MAX_GROUNDED_TICKS);
+            float wave = entity.age + tickDelta + z;
+            float height = (float) ((groundSettle * Math.sin(wave / 4.0F)) / 2.0F);
             drawCarpetSegment(matrices, light, vertexConsumer, 8 - z, height, (z + 1) / 16.0F);
         }
 

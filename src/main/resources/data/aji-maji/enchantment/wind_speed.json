@@ -1,0 +1,20 @@
+{
+  "supported_items": "aji-maji:magic_carpet",
+  "max_level": 3,
+  "weight": 10,
+  "anvil_cost": 1,
+  "description": {
+    "translate": "enchantment.aji-maji.wind_speed"
+  },
+  "min_cost": {
+    "base": 1,
+    "per_level_above_first": 11
+  },
+  "max_cost": {
+    "base": 21,
+    "per_level_above_first": 11
+  },
+  "slots": [ ],
+  "effects": {
+  }
+}

@@ -8,8 +8,8 @@ import net.minecraft.registry.Registry;
 import static xyz.fancyteam.ajimaji.AjiMaji.id;
 
 public class AMDataComponents {
-    public static final ComponentType<NbtComponent> MAGIC_CARPET_DATA =
-        ComponentType.<NbtComponent>builder().codec(NbtComponent.CODEC).build();
+    public static final ComponentType<MagicCarpetComponent> MAGIC_CARPET_DATA =
+        ComponentType.<MagicCarpetComponent>builder().codec(MagicCarpetComponent.CODEC).build();
     public static final ComponentType<TopHatIdComponent> TOP_HAT_ID =
         ComponentType.<TopHatIdComponent>builder().codec(TopHatIdComponent.CODEC).build();
 

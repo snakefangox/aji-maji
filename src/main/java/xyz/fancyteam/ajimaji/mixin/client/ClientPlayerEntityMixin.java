@@ -28,13 +28,4 @@ public abstract class ClientPlayerEntityMixin {
     private boolean ajimaji$canSprintWhenWieldingDeck(boolean original) {
         return original && !((LivingEntity) (Object) this).getActiveItem().isOf(AMItems.CARD_DECK);
     }
-
-    @Inject(method = "tickRiding()V", at = @At("TAIL"))
-    public void tickRiding(CallbackInfo ci) {
-        ClientPlayerEntity self = (ClientPlayerEntity) (Object) this;
-        Entity vehicle = self.getControllingVehicle();
-        if (vehicle instanceof MagicCarpetEntity carpetEntity) {
-
-        }
-    }
 }

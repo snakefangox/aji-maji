@@ -47,6 +47,8 @@ public class MagicCarpetRenderer extends EntityRenderer<MagicCarpetEntity> {
             drawCarpetSegment(matrices, light, vertexConsumer, 8 - z, height, (z + 1) / 16.0F);
         }
 
+        var map = entity.getMap();
+
         matrices.pop();
 
         super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);

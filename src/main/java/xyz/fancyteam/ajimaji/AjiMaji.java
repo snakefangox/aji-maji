@@ -17,6 +17,7 @@ import xyz.fancyteam.ajimaji.item.AMItems;
 import xyz.fancyteam.ajimaji.misc.AMArmorMaterials;
 import xyz.fancyteam.ajimaji.misc.AMCreativeTabs;
 import xyz.fancyteam.ajimaji.misc.AMDensityFunctions;
+import xyz.fancyteam.ajimaji.misc.AMEvents;
 import xyz.fancyteam.ajimaji.misc.AMRegistries;
 import xyz.fancyteam.ajimaji.misc.AMSoundEvents;
 import xyz.fancyteam.ajimaji.recipe.AMRecipes;
@@ -41,6 +42,7 @@ public class AjiMaji implements ModInitializer {
         AMRecipes.register();
         AMDensityFunctions.register();
         AMSoundEvents.register();
+        AMEvents.register();
 
         ServerTaskQueue.init();
         TopHatManager.init();

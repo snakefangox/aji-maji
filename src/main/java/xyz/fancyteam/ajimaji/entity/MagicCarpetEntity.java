@@ -15,7 +15,9 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -45,12 +47,15 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
         DataTracker.registerData(MagicCarpetEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<Integer> SIZE =
         DataTracker.registerData(MagicCarpetEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final TrackedData<ItemStack> MAP =
+        DataTracker.registerData(MagicCarpetEntity.class, TrackedDataHandlerRegistry.ITEM_STACK);
     private static final float VERTICAL_DEADZONE = 25F;
     public static final int MAX_GROUNDED_TICKS = 20;
 
     private UUID owner;
     private int lerpTicks;
     private int rescueBlanket;
+    private boolean fourWinds;
     private double lerpX;
     private double lerpY;
     private double lerpZ;
@@ -69,6 +74,8 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
         dataTracker.set(SIZE, stack.getEnchantments().getLevel(broad));
         rescueBlanket = stack.getEnchantments()
             .getLevel(EnchantmentUtils.getEnchantmentEntry(getWorld(), EnchantmentUtils.RESCUE_BLANKET_KEY));
+        fourWinds = stack.getEnchantments()
+            .getLevel(EnchantmentUtils.getEnchantmentEntry(getWorld(), EnchantmentUtils.FOUR_WINDS)) > 0;
     }
 
     public ItemStack writeDataToItemStack() {
@@ -89,6 +96,10 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
             stack.addEnchantment(EnchantmentUtils.getEnchantmentEntry(getWorld(), EnchantmentUtils.RESCUE_BLANKET_KEY),
                 rescueBlanket);
         }
+        if (fourWinds) {
+            stack.addEnchantment(EnchantmentUtils.getEnchantmentEntry(getWorld(), EnchantmentUtils.FOUR_WINDS),
+                1);
+        }
 
         return stack;
     }
@@ -98,6 +109,7 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
         builder.add(GROUNDED_TICKS, MAX_GROUNDED_TICKS);
         builder.add(SPEED, 0);
         builder.add(SIZE, 0);
+        builder.add(MAP, ItemStack.EMPTY);
     }
 
     @Override
@@ -108,6 +120,10 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
         dataTracker.set(SPEED, nbt.getInt("speed"));
         dataTracker.set(SIZE, nbt.getInt("size"));
         rescueBlanket = nbt.getInt("rescueBlanket");
+        fourWinds = nbt.getBoolean("fourWinds");
+        var res = ItemStack.CODEC.decode(NbtOps.INSTANCE, nbt.get("map"));
+        if (res.hasResultOrPartial())
+            dataTracker.set(MAP, res.getOrThrow().getFirst());
     }
 
     @Override
@@ -118,6 +134,11 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
         nbt.putInt("speed", getSpeed());
         nbt.putInt("size", getSize());
         nbt.putInt("rescueBlanket", rescueBlanket);
+        nbt.putBoolean("fourWinds", fourWinds);
+        if (!getMap().isEmpty()) {
+            var map = ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, getMap()).getOrThrow();
+            nbt.put("map", map);
+        }
     }
 
     @Override
@@ -134,6 +155,18 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
 
         if (!checkOwnerAndNotify(player)) {
             return ActionResult.PASS;
+        }
+
+        if (fourWinds) {
+            if (player.getStackInHand(hand).getItem() == Items.FILLED_MAP && getMap().isEmpty()) {
+                dataTracker.set(MAP, player.getStackInHand(hand).copyWithCount(1));
+                player.getStackInHand(hand).decrement(1);
+                return ActionResult.SUCCESS;
+            } else if (player.getStackInHand(hand).isEmpty() && player.isSneaking() && !getMap().isEmpty()) {
+                player.setStackInHand(hand, getMap());
+                dataTracker.set(MAP, ItemStack.EMPTY);
+                return ActionResult.SUCCESS;
+            }
         }
 
         if (player.getStackInHand(hand).isEmpty() && player.isSneaking()) {
@@ -349,6 +382,10 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
 
     public int getSize() {
         return this.dataTracker.get(SIZE);
+    }
+
+    public ItemStack getMap() {
+        return this.dataTracker.get(MAP);
     }
 
     @Override

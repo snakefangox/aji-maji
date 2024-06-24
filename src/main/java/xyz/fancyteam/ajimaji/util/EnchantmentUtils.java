@@ -15,6 +15,8 @@ public class EnchantmentUtils {
         RegistryKey.of(RegistryKeys.ENCHANTMENT, AjiMaji.id("rescue_blanket"));
     public static final RegistryKey<Enchantment> BROAD_KEY =
         RegistryKey.of(RegistryKeys.ENCHANTMENT, AjiMaji.id("broad"));
+    public static final RegistryKey<Enchantment> FOUR_WINDS =
+        RegistryKey.of(RegistryKeys.ENCHANTMENT, AjiMaji.id("four_winds"));
 
     public static RegistryEntry.Reference<Enchantment> getEnchantmentEntry(World world, RegistryKey<Enchantment> registryKey) {
         return world.getRegistryManager().get(RegistryKeys.ENCHANTMENT).entryOf(registryKey);

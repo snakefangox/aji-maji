@@ -1,17 +1,17 @@
 {
   "supported_items": "aji-maji:magic_carpet",
-  "max_level": 8,
-  "weight": 10,
-  "anvil_cost": 4,
+  "max_level": 1,
+  "weight": 5,
+  "anvil_cost": 8,
   "description": {
     "translate": "enchantment.aji-maji.four_winds"
   },
   "min_cost": {
-    "base": 10,
+    "base": 40,
     "per_level_above_first": 20
   },
   "max_cost": {
-    "base": 60,
+    "base": 80,
     "per_level_above_first": 20
   },
   "slots": [ ],

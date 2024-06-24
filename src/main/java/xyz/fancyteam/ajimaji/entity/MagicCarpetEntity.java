@@ -2,6 +2,10 @@ package xyz.fancyteam.ajimaji.entity;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityAttachmentType;
+import net.minecraft.entity.EntityAttachments;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.JumpingMount;
 import net.minecraft.entity.LivingEntity;
@@ -18,6 +22,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -28,7 +33,9 @@ import xyz.fancyteam.ajimaji.AjiMaji;
 import xyz.fancyteam.ajimaji.component.AMDataComponents;
 import xyz.fancyteam.ajimaji.component.MagicCarpetComponent;
 import xyz.fancyteam.ajimaji.item.AMItems;
+import xyz.fancyteam.ajimaji.util.EnchantmentUtils;
 
+import java.util.List;
 import java.util.UUID;
 
 public class MagicCarpetEntity extends Entity implements JumpingMount {
@@ -36,13 +43,14 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
         DataTracker.registerData(MagicCarpetEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<Integer> SPEED =
         DataTracker.registerData(MagicCarpetEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final TrackedData<Integer> SIZE =
+        DataTracker.registerData(MagicCarpetEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final float VERTICAL_DEADZONE = 25F;
     public static final int MAX_GROUNDED_TICKS = 20;
-    private static final RegistryKey<Enchantment> WIND_SPEED_KEY =
-        RegistryKey.of(RegistryKeys.ENCHANTMENT, Identifier.of(AjiMaji.MOD_ID, "wind_speed"));
 
     private UUID owner;
     private int lerpTicks;
+    private int rescueBlanket;
     private double lerpX;
     private double lerpY;
     private double lerpZ;
@@ -55,8 +63,12 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
 
     public void readDataFromItemStack(ItemStack stack) {
         owner = stack.getOrDefault(AMDataComponents.MAGIC_CARPET_DATA, MagicCarpetComponent.DEFAULT).owner();
-        var windSpeed = getWindSpeedEntry();
+        var windSpeed = EnchantmentUtils.getEnchantmentEntry(getWorld(), EnchantmentUtils.WIND_SPEED_KEY);
+        var broad = EnchantmentUtils.getEnchantmentEntry(getWorld(), EnchantmentUtils.BROAD_KEY);
         dataTracker.set(SPEED, stack.getEnchantments().getLevel(windSpeed));
+        dataTracker.set(SIZE, stack.getEnchantments().getLevel(broad));
+        rescueBlanket = stack.getEnchantments()
+            .getLevel(EnchantmentUtils.getEnchantmentEntry(getWorld(), EnchantmentUtils.RESCUE_BLANKET_KEY));
     }
 
     public ItemStack writeDataToItemStack() {
@@ -65,7 +77,19 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
         writeCustomDataToNbt(nbt);
         stack.set(AMDataComponents.MAGIC_CARPET_DATA, new MagicCarpetComponent(owner));
         int speed = getSpeed();
-        if (speed > 0) {stack.addEnchantment(getWindSpeedEntry(), speed);}
+        int size = getSize();
+        if (speed > 0) {
+            stack.addEnchantment(EnchantmentUtils.getEnchantmentEntry(getWorld(), EnchantmentUtils.WIND_SPEED_KEY),
+                speed);
+        }
+        if (size > 0) {
+            stack.addEnchantment(EnchantmentUtils.getEnchantmentEntry(getWorld(), EnchantmentUtils.BROAD_KEY), size);
+        }
+        if (rescueBlanket > 0) {
+            stack.addEnchantment(EnchantmentUtils.getEnchantmentEntry(getWorld(), EnchantmentUtils.RESCUE_BLANKET_KEY),
+                rescueBlanket);
+        }
+
         return stack;
     }
 
@@ -73,6 +97,7 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
     protected void initDataTracker(DataTracker.Builder builder) {
         builder.add(GROUNDED_TICKS, MAX_GROUNDED_TICKS);
         builder.add(SPEED, 0);
+        builder.add(SIZE, 0);
     }
 
     @Override
@@ -81,6 +106,8 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
             owner = nbt.getUuid("owner");
         }
         dataTracker.set(SPEED, nbt.getInt("speed"));
+        dataTracker.set(SIZE, nbt.getInt("size"));
+        rescueBlanket = nbt.getInt("rescueBlanket");
     }
 
     @Override
@@ -89,6 +116,8 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
             nbt.putUuid("owner", getOwner());
         }
         nbt.putInt("speed", getSpeed());
+        nbt.putInt("size", getSize());
+        nbt.putInt("rescueBlanket", rescueBlanket);
     }
 
     @Override
@@ -158,6 +187,13 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
         } else {
             if (groundedTicks > 0) dataTracker.set(GROUNDED_TICKS, getGroundedTicks() - 1);
         }
+
+        if (!getWorld().isClient && hasControllingPassenger() && false) {
+            var entities = getWorld().getOtherEntities(this, getBoundingBox().expand(2));
+            for (var e : entities) {
+                if (!e.hasVehicle()) e.startRiding(this);
+            }
+        }
     }
 
     private void updateVelocity() {
@@ -189,18 +225,53 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
 
         if (getGroundedTicks() > 0) return Vec3d.ZERO;
 
-        var riderInput = new Vec3d(controller.sidewaysSpeed / 2F, 0, controller.forwardSpeed);
+        float fwSpeed = controller.forwardSpeed;
+        var riderInput = new Vec3d(controller.sidewaysSpeed / 2F, 0, fwSpeed > 0F ? fwSpeed : fwSpeed / 2F);
         var movement = riderInput.rotateY((float) (-controller.getYaw() * (Math.PI / 180.0F)));
         if (controller.getPitch() < -VERTICAL_DEADZONE || controller.getPitch() > VERTICAL_DEADZONE) {
-            movement =
-                movement.add(0, (controller.getPitch() / -(90F - VERTICAL_DEADZONE)) * controller.forwardSpeed, 0);
+            movement = movement.add(0, (controller.getPitch() / -(90F - VERTICAL_DEADZONE)) * fwSpeed, 0);
         }
         return movement;
     }
 
     @Override
     protected double getGravity() {
-        return 0.04;
+        return 0.4;
+    }
+
+    @Override
+    public void onTrackedDataSet(TrackedData<?> data) {
+        super.onTrackedDataSet(data);
+        if (SIZE.equals(data)) {
+            this.calculateDimensions();
+        }
+    }
+
+    @Override
+    public EntityDimensions getDimensions(EntityPose pose) {
+        var size = getSize();
+        var sizeScale = (size * 0.5F);
+        var scaledDim = super.getDimensions(pose).scaled(sizeScale + 1F, 1);
+
+        var attachmentBuilder = EntityAttachments.builder();
+        for (int i = 0; i <= size; i++) {
+            var t = (i / (size + 1F)) * Math.PI * 2.0;
+            var x = Math.sin(t) * sizeScale;
+            var z = Math.cos(t) * sizeScale;
+            attachmentBuilder.add(EntityAttachmentType.PASSENGER, (float) x, scaledDim.height(), (float) z);
+        }
+
+        return scaledDim.withAttachments(attachmentBuilder);
+    }
+
+    @Override
+    protected boolean canAddPassenger(Entity passenger) {
+        return this.getPassengerList().size() < getSize() + 1;
+    }
+
+    @Override
+    public Vec3d updatePassengerForDismount(LivingEntity passenger) {
+        return getPassengerRidingPos(passenger);
     }
 
     @Override
@@ -276,8 +347,8 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
         return this.dataTracker.get(SPEED);
     }
 
-    private RegistryEntry.Reference<Enchantment> getWindSpeedEntry() {
-        return getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).entryOf(WIND_SPEED_KEY);
+    public int getSize() {
+        return this.dataTracker.get(SIZE);
     }
 
     @Override
@@ -288,18 +359,18 @@ public class MagicCarpetEntity extends Entity implements JumpingMount {
 
     @Override
     public void setJumpStrength(int strength) {
-        startLaunch(strength * 10);
+        startLaunch(strength / 2);
     }
 
     @Override
     public void startJumping(int height) {
-        startLaunch(height);
+        startLaunch(height / 20);
     }
 
-    private void startLaunch(int height) {
+    public void startLaunch(int height) {
         if (isLogicalSideForUpdatingMovement()) {
             float dir = getGroundedTicks() > 0 ? 1F : -1F;
-            launchHeight = height / 20F * dir;
+            launchHeight = height * dir;
         }
     }
 

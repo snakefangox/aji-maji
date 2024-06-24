@@ -36,7 +36,8 @@ public class MagicCarpetRenderer extends EntityRenderer<MagicCarpetEntity> {
         var vertexConsumer = vertexConsumers.getBuffer(renderLayer);
 
         matrices.push();
-        matrices.scale(0.125F, 0.125F, 0.125F);
+        float sizeMulti = (entity.getSize() * (0.5F * 0.125F));
+        matrices.scale(0.125F + sizeMulti, 0.125F, 0.125F + sizeMulti);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180F - yaw));
 
         for (int z = 0; z < 16; z++) {

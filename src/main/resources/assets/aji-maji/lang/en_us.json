@@ -12,10 +12,17 @@
 
   "message.aji-maji.not_carpet_owner": "You don't own this carpet!",
   "enchantment.aji-maji.wind_speed": "Wind Speed",
-  "enchantment.aji-maji.safety_blanket": "Safety Blanket",
+  "enchantment.aji-maji.rescue_blanket": "Rescue Blanket",
+  "enchantment.aji-maji.broad": "Broad",
 
   "tooltip.aji-maji.top_hat.id": "Top Hat Id: %s",
   "tooltip.aji-maji.top_hat.id.none": "None",
 
-  "msg.aji-maji.top_hat.entity_missing": "That creature seems to have disappeared"
+  "msg.aji-maji.top_hat.entity_missing": "That creature seems to have disappeared",
+
+  "subtitles.aji-maji.throw_card": "Card Thrown",
+  "subtitles.aji-maji.card_hit": "Card Hits",
+  "subtitles.aji-maji.carpet_unfurl": "Carpet Unfurls",
+  "subtitles.aji-maji.carpet_unfurl_violent": "Carpet Unfurls Violently",
+  "subtitles.aji-maji.carpet_teleport": "Carpet Teleports"
 }

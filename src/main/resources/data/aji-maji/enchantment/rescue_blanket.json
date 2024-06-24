@@ -4,7 +4,7 @@
   "weight": 10,
   "anvil_cost": 4,
   "description": {
-    "translate": "enchantment.aji-maji.safety_blanket"
+    "translate": "enchantment.aji-maji.rescue_blanket"
   },
   "min_cost": {
     "base": 10,

@@ -12,5 +12,23 @@
       "aji-maji:card_hit_1",
       "aji-maji:card_hit_2"
     ]
+  },
+  "entity.magic_carpet.unfurl": {
+    "subtitle": "subtitles.aji-maji.carpet_unfurl",
+    "sounds": [
+      "aji-maji:carpet_unfurl"
+    ]
+  },
+  "entity.magic_carpet.unfurl_violent": {
+    "subtitle": "subtitles.aji-maji.carpet_unfurl_violent",
+    "sounds": [
+      "aji-maji:carpet_unfurl_violent"
+    ]
+  },
+  "entity.magic_carpet.teleport": {
+    "subtitle": "subtitles.aji-maji.carpet_teleport",
+    "sounds": [
+      "aji-maji:carpet_teleport"
+    ]
   }
 }

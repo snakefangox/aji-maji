@@ -1,0 +1,29 @@
+{
+  "itemGroup.aji-maji.main": "Aji Maji",
+
+  "block.aji-maji.top_hat": "高顶礼帽",
+  "block.aji-maji.card_box": "纸牌盒",
+  "block.aji-maji.cloth_folds": "布料褶",
+
+  "item.aji-maji.magic_carpet": "魔毯",
+  "item.aji-maji.card_deck": "一副牌",
+
+  "entity.aji-maji.magic_carpet": "魔毯",
+
+  "message.aji-maji.not_carpet_owner": "你不是这张魔毯的主人！",
+  "enchantment.aji-maji.wind_speed": "风速",
+  "enchantment.aji-maji.rescue_blanket": "急救飞毯",
+  "enchantment.aji-maji.broad": "宽阔",
+  "enchantment.aji-maji.four_winds": "四方之风",
+
+  "tooltip.aji-maji.top_hat.id": "高顶礼帽Id：%s",
+  "tooltip.aji-maji.top_hat.id.none": "无",
+
+  "msg.aji-maji.top_hat.entity_missing": "那个生物好像消失了",
+
+  "subtitles.aji-maji.throw_card": "纸牌：投掷",
+  "subtitles.aji-maji.card_hit": "纸牌：击中",
+  "subtitles.aji-maji.carpet_unfurl": "魔毯：伸展",
+  "subtitles.aji-maji.carpet_unfurl_violent": "魔毯：猛烈伸展",
+  "subtitles.aji-maji.carpet_teleport": "魔毯：传送"
+}

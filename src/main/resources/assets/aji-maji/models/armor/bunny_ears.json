@@ -1,0 +1,67 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"0": "aji-maji:block/bunny_ears",
+		"particle": "aji-maji:block/bunny_ears"
+	},
+  "display": {
+    "head": {
+      "rotation": [ 0, 0, 0 ],
+      "translation": [ 0.5, 6, 0 ],
+      "scale": [ 1.5, 1.5, 1.5 ]
+    }
+  },
+	"elements": [
+		{
+			"name": "band",
+			"from": [3.25, 0, 7.5],
+			"to": [12.25, 9, 7.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [3.25, 0, 7.5]},
+			"faces": {
+				"north": {"uv": [0, 0, 4.5, 4.5], "texture": "#0"},
+				"east": {"uv": [0, 0, 0, 4.5], "texture": "#0"},
+				"south": {"uv": [0, 4.5, 4.5, 9], "texture": "#0"},
+				"west": {"uv": [0, 0, 0, 4.5], "texture": "#0"},
+				"up": {"uv": [4.5, 0, 0, 0], "texture": "#0"},
+				"down": {"uv": [4.5, 0, 0, 0], "texture": "#0"}
+			}
+		},
+		{
+			"name": "ear",
+			"from": [3.75, 7.25, 7.49],
+			"to": [6.75, 15.25, 7.49],
+			"rotation": {"angle": 22.5, "axis": "z", "origin": [3.75, 7.25, 7.5]},
+			"faces": {
+				"north": {"uv": [4.5, 0, 6, 4], "texture": "#0"},
+				"east": {"uv": [0, 0, 0, 4], "texture": "#0"},
+				"south": {"uv": [4.5, 4, 6, 8], "texture": "#0"},
+				"west": {"uv": [0, 0, 0, 4], "texture": "#0"},
+				"up": {"uv": [1.5, 0, 0, 0], "texture": "#0"},
+				"down": {"uv": [1.5, 0, 0, 0], "texture": "#0"}
+			}
+		},
+		{
+			"name": "ear2",
+			"from": [9, 8.5, 7.49],
+			"to": [12, 16.5, 7.49],
+			"rotation": {"angle": -22.5, "axis": "z", "origin": [9, 8.5, 7.25]},
+			"faces": {
+				"north": {"uv": [6, 0, 7.5, 4], "texture": "#0"},
+				"east": {"uv": [0, 0, 0, 4], "texture": "#0"},
+				"south": {"uv": [6, 4, 7.5, 8], "texture": "#0"},
+				"west": {"uv": [0, 0, 0, 4], "texture": "#0"},
+				"up": {"uv": [1.5, 0, 0, 0], "texture": "#0"},
+				"down": {"uv": [1.5, 0, 0, 0], "texture": "#0"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "bunny",
+			"origin": [2, -1, 7],
+			"color": 0,
+			"children": [0, 1, 2]
+		}
+	]
+}

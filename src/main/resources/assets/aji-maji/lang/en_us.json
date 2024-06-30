@@ -5,6 +5,7 @@
   "block.aji-maji.card_box": "Card Box",
   "block.aji-maji.cloth_folds": "Cloth Folds",
 
+  "item.aji-maji.bunny_ears": "Bunny Ears",
   "item.aji-maji.magic_carpet": "Magic Carpet",
   "item.aji-maji.card_deck": "Deck of Cards",
 
@@ -18,6 +19,7 @@
 
   "tooltip.aji-maji.top_hat.id": "Top Hat Id: %s",
   "tooltip.aji-maji.top_hat.id.none": "None",
+  "tooltip.aji-maji.bunny_ears": "Wearing Bunny Ears allows you to be put into a top hat.",
 
   "msg.aji-maji.top_hat.entity_missing": "That creature seems to have disappeared",
 

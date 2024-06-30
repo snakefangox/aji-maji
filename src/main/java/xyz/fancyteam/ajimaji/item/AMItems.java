@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -29,6 +30,8 @@ public class AMItems {
     public static final TopHatBlockItem TOP_HAT =
         new TopHatBlockItem(AMBlocks.TOP_HAT, AMArmorMaterials.MAGICIANS_ARMOR_MATERIAL,
             new Item.Settings().maxCount(1));
+    public static final BunnyEarsItem BUNNY_EARS =
+        new BunnyEarsItem(AMArmorMaterials.MAGICIANS_ARMOR_MATERIAL, new Item.Settings().maxCount(1));
     public static final MagicCarpetItem MAGIC_CARPET =
         new MagicCarpetItem(new Item.Settings().maxCount(1));
     public static final CardDeckItem CARD_DECK =
@@ -40,6 +43,7 @@ public class AMItems {
 
     public static void register() {
         register("top_hat", TOP_HAT);
+        register("bunny_ears", BUNNY_EARS);
         register("magic_carpet", MAGIC_CARPET);
         register("card_deck", CARD_DECK);
         register("card_box", CARD_BOX);
@@ -56,7 +60,13 @@ public class AMItems {
                     world.getNonSpectatingEntities(LivingEntity.class, Box.of(Vec3d.ofCenter(pos), 1.0, 1.0, 1.0));
                 if (!entities.isEmpty()) {
                     for (LivingEntity entity : entities) {
-                        TopHatBlockItem.insertEntity(stack, entity);
+                        if (entity instanceof PlayerEntity player) {
+                            if (player.getInventory().getArmorStack(3).isOf(BUNNY_EARS)) {
+                                TopHatBlockItem.insertEntity(stack, entity);
+                            }
+                        } else {
+                            TopHatBlockItem.insertEntity(stack, entity);
+                        }
                     }
                 } else {
                     TopHatBlockItem.retrieveEntity(stack, world, Vec3d.ofBottomCenter(pos));

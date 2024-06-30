@@ -29,6 +29,13 @@ public class AjiMaji implements ModInitializer {
     public static final String MOD_ID = "aji-maji";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+    public static final String FORCE_USE_TOP_HAT_PERM = "aji-maji.top-hat.force";
+    public static final int FORCE_USE_TOP_HAT_PERM_DEFAULT = 2;
+    public static final String USE_TOP_HAT_ON_ENTITIES_PERM = "aji-maji.top-hat.entities";
+    public static final boolean USE_TOP_HAT_ON_ENTITIES_PERM_DEFAULT = false;
+    public static final String USE_TOP_HAT_ON_PLAYERS_PERM = "aji-maji.top-hat.players";
+    public static final boolean USE_TOP_HAT_ON_PLAYERS_PERM_DEFAULT = true;
+
     @Override
     public void onInitialize() {
         AMRegistries.register();

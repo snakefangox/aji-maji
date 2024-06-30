@@ -66,7 +66,7 @@ public class TopHatManager extends PersistentState {
             // make sure top hats can pick up entities that would otherwise cancel interaction
             ItemStack stack = player.getStackInHand(hand);
             if (stack.isOf(AMItems.TOP_HAT)) {
-                return TopHatBlockItem.insertEntity(stack, entity);
+                return TopHatBlockItem.useOnEntity(stack, player, entity);
             }
 
             return ActionResult.PASS;

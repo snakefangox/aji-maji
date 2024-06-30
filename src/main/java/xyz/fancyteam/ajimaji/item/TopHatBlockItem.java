@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
+import me.lucko.fabric.api.permissions.v0.Permissions;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -22,6 +24,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.TeleportTarget;
 
+import xyz.fancyteam.ajimaji.AjiMaji;
 import xyz.fancyteam.ajimaji.component.AMDataComponents;
 import xyz.fancyteam.ajimaji.component.TopHatIdComponent;
 import xyz.fancyteam.ajimaji.top_hat.TopHatManager;
@@ -70,9 +73,22 @@ public class TopHatBlockItem extends ArmorBlockItem {
 
     @Override
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
-        if (!user.canModifyBlocks()) return ActionResult.PASS;
+        return useOnEntity(stack, user, entity);
+    }
 
-        return insertEntity(stack, entity);
+    public static ActionResult useOnEntity(ItemStack stack, PlayerEntity user, Entity entity) {
+        if (Permissions.check(user, AjiMaji.FORCE_USE_TOP_HAT_PERM, AjiMaji.FORCE_USE_TOP_HAT_PERM_DEFAULT)) {
+            return insertEntity(stack, entity);
+        } else if (entity instanceof PlayerEntity playerEntity &&
+            Permissions.check(user, AjiMaji.USE_TOP_HAT_ON_PLAYERS_PERM, AjiMaji.USE_TOP_HAT_ON_PLAYERS_PERM_DEFAULT)) {
+            if (playerEntity.getInventory().getArmorStack(3).isOf(AMItems.BUNNY_EARS)) {
+                return insertEntity(stack, entity);
+            }
+        } else if (Permissions.check(user, AjiMaji.USE_TOP_HAT_ON_ENTITIES_PERM,
+            AjiMaji.USE_TOP_HAT_ON_ENTITIES_PERM_DEFAULT)) {
+            return insertEntity(stack, entity);
+        }
+        return ActionResult.PASS;
     }
 
     public static ActionResult insertEntity(ItemStack stack, Entity entity) {

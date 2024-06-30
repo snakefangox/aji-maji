@@ -251,7 +251,7 @@ public class TopHatManager extends PersistentState {
     }
 
     private void storeEntity(Entity entity) {
-        if (!(entity instanceof PlayerEntity) && entity.getType().isSaveable()) {
+        if (!(entity instanceof PlayerEntity) && entity.getType().isSaveable() && !hasPlayerRider(entity)) {
             NbtCompound nbt = new NbtCompound();
             if (entity.saveNbt(nbt)) {
                 AjiMaji.LOGGER.debug("Storing entity: {} @ {}", entity, entity.getChunkPos());
@@ -259,6 +259,20 @@ public class TopHatManager extends PersistentState {
                 markDirty();
             }
         }
+    }
+
+    private boolean hasPlayerRider(Entity entity) {
+        ArrayDeque<Entity> entities = new ArrayDeque<>();
+        entities.offer(entity);
+
+        while (!entities.isEmpty()) {
+            Entity child = entities.poll();
+            if (child instanceof PlayerEntity) return true;
+
+            entities.addAll(child.getPassengerList());
+        }
+
+        return false;
     }
 
     private void onChunkLoad(ServerWorld world, WorldChunk chunk) {

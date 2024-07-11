@@ -34,6 +34,8 @@ import xyz.fancyteam.ajimaji.top_hat.TopHatManager;
 import static xyz.fancyteam.ajimaji.AjiMaji.tt;
 
 public class TopHatBlockItem extends ArmorBlockItem {
+    private static final int COOLDOWN = 40;
+    
     public TopHatBlockItem(Block block, RegistryEntry<ArmorMaterial> material,
                            Settings settings) {
         super(block, material, Type.HELMET, settings);
@@ -54,19 +56,25 @@ public class TopHatBlockItem extends ArmorBlockItem {
     }
 
     public static @NotNull ActionResult useOnBlock(PlayerEntity player, World world1, Direction side,
-                                                    Vec3d hitPos, BlockPos blockPos, ItemStack stack) {
+                                                   Vec3d hitPos, BlockPos blockPos, ItemStack stack) {
         if (player == null || !player.isSneaking()) {
-            if (world1 instanceof ServerWorld world) {
-                Vec3d entityPos;
-                if (side == Direction.UP) {
-                    entityPos = hitPos;
-                } else {
-                    entityPos = Vec3d.ofBottomCenter(blockPos.offset(side));
-                }
+            if (player == null || !player.getItemCooldownManager().isCoolingDown(AMItems.TOP_HAT)) {
+                if (world1 instanceof ServerWorld world) {
+                    Vec3d entityPos;
+                    if (side == Direction.UP) {
+                        entityPos = hitPos;
+                    } else {
+                        entityPos = Vec3d.ofBottomCenter(blockPos.offset(side));
+                    }
 
-                return retrieveEntity(stack, world, entityPos);
+                    if (player != null) player.getItemCooldownManager().set(AMItems.TOP_HAT, COOLDOWN);
+
+                    return retrieveEntity(stack, world, entityPos);
+                } else {
+                    return ActionResult.CONSUME;
+                }
             } else {
-                return ActionResult.CONSUME;
+                return ActionResult.FAIL;
             }
         }
         return ActionResult.PASS;
@@ -87,21 +95,27 @@ public class TopHatBlockItem extends ArmorBlockItem {
     }
 
     public static ActionResult useOnEntity(ItemStack stack, PlayerEntity user, Entity entity) {
-        if (!entity.getWorld().isClient) {
-            if (Permissions.check(user, AjiMaji.FORCE_USE_TOP_HAT_PERM, AjiMaji.FORCE_USE_TOP_HAT_PERM_DEFAULT)) {
-                return insertEntity(stack, entity);
-            } else if (entity instanceof PlayerEntity playerEntity &&
-                Permissions.check(user, AjiMaji.USE_TOP_HAT_ON_PLAYERS_PERM,
-                    AjiMaji.USE_TOP_HAT_ON_PLAYERS_PERM_DEFAULT)) {
-                if (playerEntity.getInventory().getArmorStack(3).isOf(AMItems.BUNNY_EARS)) {
+        if (!user.getItemCooldownManager().isCoolingDown(AMItems.TOP_HAT)) {
+            if (!entity.getWorld().isClient) {
+                if (Permissions.check(user, AjiMaji.FORCE_USE_TOP_HAT_PERM, AjiMaji.FORCE_USE_TOP_HAT_PERM_DEFAULT)) {
+                    user.getItemCooldownManager().set(AMItems.TOP_HAT, COOLDOWN);
+                    return insertEntity(stack, entity);
+                } else if (entity instanceof PlayerEntity playerEntity &&
+                    Permissions.check(user, AjiMaji.USE_TOP_HAT_ON_PLAYERS_PERM,
+                        AjiMaji.USE_TOP_HAT_ON_PLAYERS_PERM_DEFAULT)) {
+                    if (playerEntity.getInventory().getArmorStack(3).isOf(AMItems.BUNNY_EARS)) {
+                        user.getItemCooldownManager().set(AMItems.TOP_HAT, COOLDOWN);
+                        return insertEntity(stack, entity);
+                    }
+                } else if (Permissions.check(user, AjiMaji.USE_TOP_HAT_ON_ENTITIES_PERM,
+                    AjiMaji.USE_TOP_HAT_ON_ENTITIES_PERM_DEFAULT)) {
+                    user.getItemCooldownManager().set(AMItems.TOP_HAT, COOLDOWN);
                     return insertEntity(stack, entity);
                 }
-            } else if (Permissions.check(user, AjiMaji.USE_TOP_HAT_ON_ENTITIES_PERM,
-                AjiMaji.USE_TOP_HAT_ON_ENTITIES_PERM_DEFAULT)) {
-                return insertEntity(stack, entity);
             }
+            return ActionResult.CONSUME;
         }
-        return ActionResult.CONSUME;
+        return ActionResult.FAIL;
     }
 
     public static ActionResult insertEntity(ItemStack stack, Entity entity) {

@@ -77,18 +77,21 @@ public class TopHatBlockItem extends ArmorBlockItem {
     }
 
     public static ActionResult useOnEntity(ItemStack stack, PlayerEntity user, Entity entity) {
-        if (Permissions.check(user, AjiMaji.FORCE_USE_TOP_HAT_PERM, AjiMaji.FORCE_USE_TOP_HAT_PERM_DEFAULT)) {
-            return insertEntity(stack, entity);
-        } else if (entity instanceof PlayerEntity playerEntity &&
-            Permissions.check(user, AjiMaji.USE_TOP_HAT_ON_PLAYERS_PERM, AjiMaji.USE_TOP_HAT_ON_PLAYERS_PERM_DEFAULT)) {
-            if (playerEntity.getInventory().getArmorStack(3).isOf(AMItems.BUNNY_EARS)) {
+        if (!entity.getWorld().isClient) {
+            if (Permissions.check(user, AjiMaji.FORCE_USE_TOP_HAT_PERM, AjiMaji.FORCE_USE_TOP_HAT_PERM_DEFAULT)) {
+                return insertEntity(stack, entity);
+            } else if (entity instanceof PlayerEntity playerEntity &&
+                Permissions.check(user, AjiMaji.USE_TOP_HAT_ON_PLAYERS_PERM,
+                    AjiMaji.USE_TOP_HAT_ON_PLAYERS_PERM_DEFAULT)) {
+                if (playerEntity.getInventory().getArmorStack(3).isOf(AMItems.BUNNY_EARS)) {
+                    return insertEntity(stack, entity);
+                }
+            } else if (Permissions.check(user, AjiMaji.USE_TOP_HAT_ON_ENTITIES_PERM,
+                AjiMaji.USE_TOP_HAT_ON_ENTITIES_PERM_DEFAULT)) {
                 return insertEntity(stack, entity);
             }
-        } else if (Permissions.check(user, AjiMaji.USE_TOP_HAT_ON_ENTITIES_PERM,
-            AjiMaji.USE_TOP_HAT_ON_ENTITIES_PERM_DEFAULT)) {
-            return insertEntity(stack, entity);
         }
-        return ActionResult.PASS;
+        return ActionResult.CONSUME;
     }
 
     public static ActionResult insertEntity(ItemStack stack, Entity entity) {

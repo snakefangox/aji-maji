@@ -61,8 +61,6 @@ public class TopHatManager extends PersistentState {
 
     public static void init() {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            if (!player.canModifyBlocks()) return ActionResult.PASS;
-
             // make sure top hats can pick up entities that would otherwise cancel interaction
             ItemStack stack = player.getStackInHand(hand);
             if (stack.isOf(AMItems.TOP_HAT)) {

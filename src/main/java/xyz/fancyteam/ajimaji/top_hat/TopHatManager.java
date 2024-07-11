@@ -60,16 +60,6 @@ public class TopHatManager extends PersistentState {
     private record EntityData(EntityType<?> type, NbtCompound nbt, ChunkPos pos) {}
 
     public static void init() {
-        UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            // make sure top hats can pick up entities that would otherwise cancel interaction
-            ItemStack stack = player.getStackInHand(hand);
-            if (stack.isOf(AMItems.TOP_HAT)) {
-                return TopHatBlockItem.useOnEntity(stack, player, entity);
-            }
-
-            return ActionResult.PASS;
-        });
-
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(
             (entity, source, amount) -> {
                 RegistryEntry<DamageType> damageType = source.getTypeRegistryEntry();

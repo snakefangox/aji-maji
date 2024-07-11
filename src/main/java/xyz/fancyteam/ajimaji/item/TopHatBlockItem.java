@@ -20,9 +20,11 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.TeleportTarget;
+import net.minecraft.world.World;
 
 import xyz.fancyteam.ajimaji.AjiMaji;
 import xyz.fancyteam.ajimaji.component.AMDataComponents;
@@ -44,22 +46,30 @@ public class TopHatBlockItem extends ArmorBlockItem {
 
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
-        PlayerEntity player = context.getPlayer();
+        ActionResult result =
+            useOnBlock(context.getPlayer(), context.getWorld(), context.getSide(), context.getHitPos(),
+                context.getBlockPos(), context.getStack());
+        if (result != ActionResult.PASS) return result;
+        return super.useOnBlock(context);
+    }
+
+    public static @NotNull ActionResult useOnBlock(PlayerEntity player, World world1, Direction side,
+                                                    Vec3d hitPos, BlockPos blockPos, ItemStack stack) {
         if (player == null || !player.isSneaking()) {
-            if (context.getWorld() instanceof ServerWorld world) {
+            if (world1 instanceof ServerWorld world) {
                 Vec3d entityPos;
-                if (context.getSide() == Direction.UP) {
-                    entityPos = context.getHitPos();
+                if (side == Direction.UP) {
+                    entityPos = hitPos;
                 } else {
-                    entityPos = Vec3d.ofBottomCenter(context.getBlockPos().offset(context.getSide()));
+                    entityPos = Vec3d.ofBottomCenter(blockPos.offset(side));
                 }
 
-                return retrieveEntity(context.getStack(), world, entityPos);
+                return retrieveEntity(stack, world, entityPos);
             } else {
                 return ActionResult.CONSUME;
             }
         }
-        return super.useOnBlock(context);
+        return ActionResult.PASS;
     }
 
     public static @NotNull ActionResult retrieveEntity(ItemStack stack, ServerWorld world, Vec3d entityPos) {

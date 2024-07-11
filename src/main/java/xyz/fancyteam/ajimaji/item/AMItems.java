@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -13,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPointer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -21,6 +23,8 @@ import net.minecraft.util.math.Vec3d;
 
 import xyz.fancyteam.ajimaji.block.AMBlocks;
 import xyz.fancyteam.ajimaji.misc.AMArmorMaterials;
+
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 
 import static xyz.fancyteam.ajimaji.AjiMaji.id;
 
@@ -48,6 +52,16 @@ public class AMItems {
         register("card_deck", CARD_DECK);
         register("card_box", CARD_BOX);
         register("playing_card", PLAYING_CARD);
+
+        UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+            // make sure top hats can pick up entities that would otherwise cancel interaction
+            ItemStack stack = player.getStackInHand(hand);
+            if (stack.isOf(AMItems.TOP_HAT)) {
+                return TopHatBlockItem.useOnEntity(stack, player, entity);
+            }
+
+            return ActionResult.PASS;
+        });
 
         DispenserBlock.registerBehavior(TOP_HAT, new ItemDispenserBehavior() {
             @Override

@@ -20,6 +20,7 @@ import xyz.fancyteam.ajimaji.misc.AMDensityFunctions;
 import xyz.fancyteam.ajimaji.misc.AMEvents;
 import xyz.fancyteam.ajimaji.misc.AMRegistries;
 import xyz.fancyteam.ajimaji.misc.AMSoundEvents;
+import xyz.fancyteam.ajimaji.net.AMNet;
 import xyz.fancyteam.ajimaji.recipe.AMRecipes;
 import xyz.fancyteam.ajimaji.top_hat.TopHatManager;
 import xyz.fancyteam.ajimaji.util.ServerTaskQueue;
@@ -30,7 +31,7 @@ public class AjiMaji implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     public static final String FORCE_USE_TOP_HAT_PERM = "aji-maji.top-hat.force";
-    public static final int FORCE_USE_TOP_HAT_PERM_DEFAULT = 2;
+    public static final int FORCE_USE_TOP_HAT_PERM_DEFAULT = 3;
     public static final String USE_TOP_HAT_ON_ENTITIES_PERM = "aji-maji.top-hat.entities";
     public static final boolean USE_TOP_HAT_ON_ENTITIES_PERM_DEFAULT = false;
     public static final String USE_TOP_HAT_ON_PLAYERS_PERM = "aji-maji.top-hat.players";
@@ -50,6 +51,7 @@ public class AjiMaji implements ModInitializer {
         AMDensityFunctions.register();
         AMSoundEvents.register();
         AMEvents.register();
+        AMNet.register();
 
         ServerTaskQueue.init();
         TopHatManager.init();

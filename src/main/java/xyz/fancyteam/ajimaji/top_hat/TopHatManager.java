@@ -233,6 +233,7 @@ public class TopHatManager extends PersistentState {
         } else {
             markDirty();
             entityDatas.remove(entityId);
+            retrieved.fallDistance = 0;
             retrieved.teleportTo(target);
             return true;
         }
